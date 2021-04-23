@@ -1,0 +1,86 @@
+사용자 user
+- 아이디 id
+- 비밀번호 passwd
+- 이름 name
+- 주소 address
+- 휴대폰 번호 phone
+- 연령대 age
+- 한줄메시지 message
+- 닉네임 nickname
+
+
+create table user(
+	id varchar(20) primary key,
+	passwd varchar(20) not null,
+	name varchar(10) not null,
+	address varchar(50),
+	phone varchar(15),
+	age varchar(10),
+	message varchar(30),
+	nickname varchar(20)
+);
+
+
+사용자_전력량_합계 energy_amount
+- 아이디 - 외래키
+- 누적전력량
+
+create table energy_amount(
+	amount int,
+	id varchar(20) primary key,
+	foreign key(id) references user(id)
+)
+
+전력 데이터 elec_energy
+- 아이디 - 외래키 id
+- 시작시간 startwith
+- 끝난시간 endwith
+- 날짜 date
+- 지역정보(운동기구 부여 아이디) 
+- 생산한 전력량 energy
+
+create table elec_energy(
+	num int primary key auto_increment,
+	id varchar(20) not null,
+	startwith time,
+	endwidth time,
+	date date,
+	energy int,
+	fid varchar(20),
+	foreign key(id) references user(id)
+)
+
+기부 donate
+- 아이디 - 외래키 id
+- 날짜 date
+- 시간 time
+- 전력량 energy
+- 기부처 donateTo
+
+create table donate(
+	num int primary key auto_increment,
+	id varchar(20) not null,
+	date date,
+	time time,
+	energy int,
+	donateto varchar(30),
+	foreign key(id) references user(id)
+)
+
+할인 discount
+- 아이디 - 외래키 id
+- 날짜 date
+- 시간 time
+- 전력량 energy
+- 가구주소 address
+
+
+create table discount(
+	num int primary key auto_increment,
+	id varchar(20) not null,
+	date date,
+	time time,
+	energy int,
+	address varchar(50),
+	foreign key(id) references user(id)
+)
