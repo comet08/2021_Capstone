@@ -71,6 +71,16 @@ app.post('/register', function(req,res){
 }  )
       });
 
+app.get('/userinfo', function(req,res){
+        db.query(`select id, name, address, phone, age, message, nickname from user`, function(err, rows, fields){
+                if(err){
+                console.log(err);
+                res.send(err);
+        }
+        res.send(rows);
+        })
+});
+
 app.get('/rank', function(req,res){
     db.query(`select e.amount, u.nickname, u.message from energy_amount as e, user as u where e.id = u.id order by e.amount desc limit 10`, function(err, rows, fields){
         if(err) {
