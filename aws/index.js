@@ -21,27 +21,49 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 
 
-app.get('/test', function(req,res){
-    db.query('select * from user', function(err, rows, fields){
+app.get('/idcheck', function(req,res){
+    let {id} = req.query;
+    console.log(id);
+    db.query(`select * from user where id='${id}'`, function(err, rows, fields){
         if(err) {
-        	console.log(err);
-        	res.send(err);
+                console.log(err);
+                res.send(false);
         }
         console.log(rows);
-        res.send(rows);
+        if(rows.length)
+                res.send(true);
+        else
+                res.send(false);
     })
 });
 
+app.get('/userinfo', function(req,res){
+        db.query(`select id, name, address, phone, age, message, nickname from user`, function(err, rows, fields){
+                if(err){
+                console.log(err);
+                res.send(err);
+        }
+        res.send(rows);
+        })
+});
+
+
+
+
+
 app.post('/login', function(req,res){
   let {id, passwd} = req.body;
-    db.query(`select * from user where id='${id}', passwd='${passwd}'`, function(err, rows, fields){
+    db.query(`select * from user where id='${id}'and passwd='${passwd}'`, function(err, rows, fields){
         if(err)
         {
-            res.send("login db error");
+            res.send(false);
         }
         else{
-          if(rows[0].passwd == passwd)
-            res.send(rows);
+          console.log(rows)
+          if(rows.length){
+            if(rows[0].passwd == passwd)
+              res.send(rows);
+          }
           else
             res.send(false);
         }
@@ -56,13 +78,13 @@ app.post('/register', function(req,res){
       values('${id}', '${passwd}', '${name}', '${address}', '${phone}', ${age}, '${message}', '${nickname}' )`, function(err, rows, fields){
         if(err) {
           console.log(err);
-          res.send(err);
+          res.send(false);
         }
         else{
           db.query(`insert into energy_amount(amount, id) values(0, '${id}')` ,function(err, rows, fiedls){
             if(err) {
               console.log(err);
-              res.send(err);
+              res.send(false);
           }
           else
             res.send(true);
