@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native'; 
 
+import { useNavigation } from '@react-navigation/native';
+
 import MainTab from './src/components/MainTab';
 
 import Discount from './src/components/AppTabs/Discount'
@@ -27,21 +29,29 @@ import { createStackNavigator} from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
 class App extends React.Component{
+  
+
   constructor(props){
     super(props);
     this.state = {
-        loggedIn : false
+        loggedIn : false,
     }
+  }
+  componentDidMount= ()=>{
+
   }
 
   render(){
+    
       const {loggedIn} = this.state;
-      if(loggedIn){
+      if(!loggedIn){
         return(
           <NavigationContainer style={styles.container}>
             <Stack.Navigator initialRouteName='Login' headerMode = 'None'>
-              <Stack.Screen name='Login' component={Login} navigation = {this.props.navigation} />
-              <Stack.Screen name='Register' component={Register} />
+              <Stack.Screen name='Login'>
+                {(props) => <Login {...props} setLoggedIn={this._setLoggedIn} />}
+              </Stack.Screen>
+              <Stack.Screen name='Register' component={Register}  navigation={this.props.navigation}/>
             </Stack.Navigator>
           </NavigationContainer>
         )
@@ -59,15 +69,21 @@ class App extends React.Component{
             </Stack.Navigator>
           </NavigationContainer>
         )
-      }
-
-    
-
+      }  
   }
- 
+
+  _setLoggedIn = (val)=>{
+    console.log("세팅!")
+    this.setState({
+      loggedIn : val
+    })
+  }
 }
 
+
 export default App;
+
+
 const styles = StyleSheet.create({
   container : {
       backgroundColor : 'green'
