@@ -137,7 +137,8 @@ app.post('/register', function(req,res){ // 회원가입
 }  )
       });
 
-app.get('/rank', function(req,res){ // 순위 조회
+
+app.get('/rank', function(req,res){ //순위 조회
     db.query(`select e.amount, u.nickname, u.message from energy_amount as e, user as u where e.id = u.id order by e.amount desc limit 10`, function(err, rows, fields){
         if(err) {
                 console.log(err);
@@ -146,6 +147,8 @@ app.get('/rank', function(req,res){ // 순위 조회
         res.send(rows);
     })
 });
+  
+
 
 app.post('/donate', function(req,res){ // 기부
     let {  date, time, energy, donateto} = req.body;
