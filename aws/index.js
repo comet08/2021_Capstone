@@ -4,6 +4,9 @@ const http = require('http').Server(app);
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
+const session = require('express-session');
+const sessionStore = require('express-mysql-session')(session);
+
 var db = mysql.createConnection({
   host:'',
   user:'',
@@ -20,8 +23,31 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 
+app.use(session({ // 세션
+  key: 'sid',
+  secret: 'secretSosam!@poll',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
+  },
+  store : new sessionStore({
+      host: '',
+      port : '',
+      user : '',
+      password : '',
+      database : ''
+  })
+}));
 
-app.get('/idcheck', function(req,res){
+app.get('/isLoggedIn', function(req, res){ // 로그인상태
+        console.log(req.session.userid)
+  if(req.session.userid!=null)
+     res.send(true);
+   else res.send(false);
+})
+
+app.get('/idcheck', function(req,res){ // 회원가입 아이디 중복확인
     let {id} = req.query;
     console.log(id);
     db.query(`select * from user where id='${id}'`, function(err, rows, fields){
@@ -48,10 +74,15 @@ app.get('/userinfo', function(req,res){
 });
 
 
+app.get("/logout", function(req,res,next){
+    req.session.destroy();
+    res.clearCookie('sid');
+    console.log("로그아웃");
+    res.send(true);
+});
 
 
-
-app.post('/login', function(req,res){
+app.post('/login', function(req,res){ // 로그인 POST
   let {id, passwd} = req.body;
     db.query(`select * from user where id='${id}'and passwd='${passwd}'`, function(err, rows, fields){
         if(err)
@@ -61,8 +92,12 @@ app.post('/login', function(req,res){
         else{
           console.log(rows)
           if(rows.length){
-            if(rows[0].passwd == passwd)
+            if(rows[0].passwd == passwd){
               res.send(rows);
+              req.session.userid = id;
+                console.log(req.session.userid);
+              req.session.save(()=>{console.log("saved")})
+        }
           }
           else
             res.send(false);
@@ -70,7 +105,16 @@ app.post('/login', function(req,res){
     })
 });
 
-app.post('/register', function(req,res){
+app.get('/login', function(req, res, next){ // 로그인 GET
+  let session = req.session;
+    if(session.userid)
+      res.send(true);
+    else
+      res.send(false);
+  });
+
+
+app.post('/register', function(req,res){ // 회원가입
   console.log(req.body);
   let {id, passwd, name, address, phone, age, message, nickname} = req.body;
   age = Number(age);
@@ -93,18 +137,19 @@ app.post('/register', function(req,res){
 }  )
       });
 
-app.get('/rank', function(req,res){
+app.get('/rank', function(req,res){ // 순위 조회
     db.query(`select e.amount, u.nickname, u.message from energy_amount as e, user as u where e.id = u.id order by e.amount desc limit 10`, function(err, rows, fields){
         if(err) {
-        	console.log(err);
-        	res.send(err);
+                console.log(err);
+                res.send(err);
         }
         res.send(rows);
     })
 });
 
-app.post('/donate', function(req,res){
-    let { id, date, time, energy, donateto} = req.body;
+app.post('/donate', function(req,res){ // 기부
+    let {  date, time, energy, donateto} = req.body;
+    let id = req.session.userid;
     let uamount = 0;
     energy = Number(energy);
     db.query(`insert into donate(id, date, time, energy, donateto)
@@ -135,8 +180,9 @@ app.post('/donate', function(req,res){
 });
 
 
-app.post('/discount', function(req,res){
-    let { id, date, time, energy, address} = req.body;
+app.post('/discount', function(req,res){ // 전기료 할인
+    let {  date, time, energy, address} = req.body;
+    let id = req.session.userid;
     let uamount = 0;
     energy = Number(energy);
     db.query(`insert into discount(id, date, time, energy, address)
@@ -167,8 +213,7 @@ app.post('/discount', function(req,res){
 
 
 
-app.post('/exercise', function(req,res){
-  console.log(req.body);
+app.post('/exercise', function(req,res){ // 운동 후
   if(req.body=={}) res.send('.');
   let { id, startwith, endwith, date, energy, fid} = req.body;
   let uamount = 0;
