@@ -11,10 +11,6 @@ const Register = ({navigation}) =>{
     const [idCheck, setIdCheck] = useState(false);
     const [passwd, setPasswd] = useState('');
     const [passwdcheck, setPasswdCheck] = useState('');
-
-    const [passwdstar, setPasswdStar] = useState('');
-    const [passwdcheckstar, setPasswdCheckStar] = useState('');
-
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
@@ -23,9 +19,7 @@ const Register = ({navigation}) =>{
     const [errmessage, setErr] = useState('');
     const [checkPoint, setCheckPoint] = useState(false);
  
-    const passwordToStar = () =>{
 
-    }
     const onidCheck = async () =>{
         //아이디 체크
         if(id==''){
@@ -41,7 +35,7 @@ const Register = ({navigation}) =>{
             );
         }
         else{
-
+            console.log(id);
             await axios.get(`/idcheck?id=${id.toLocaleLowerCase()}`)
             .then((res)=>{   
                 console.log(res.data)  
@@ -149,7 +143,7 @@ const Register = ({navigation}) =>{
             'message' : ''
         }
 
-        await axios.post(`http://18.188.68.133/register`,body)
+        await axios.post(`/register`,body)
         .then((res)=>{
             if(res.data)
             {
@@ -205,8 +199,8 @@ const Register = ({navigation}) =>{
                         <Text style = {styles.idButtonText}>중복확인</Text>
                     </TouchableOpacity>
                 </View>
-                    <TextInput style = {styles.input} placeholder='비밀번호'onChangeText={n=>setPasswd(n)}/>
-                    <TextInput style = {styles.input} placeholder='비밀번호 확인'onChangeText={n=>setPasswdCheck(n)}/>
+                    <TextInput style = {styles.input} placeholder='비밀번호' secureTextEntry ={true} onChangeText={n=>setPasswd(n)}/>
+                    <TextInput style = {styles.input} placeholder='비밀번호 확인'secureTextEntry ={true} onChangeText={n=>setPasswdCheck(n)}/>
                     <TextInput style = {styles.input} placeholder='이름'onChangeText={n=>setName(n)}/>
                     <TextInput style = {styles.input} placeholder='닉네임'onChangeText={n=>setNick(n)}/>
                     <TextInput style = {styles.input} placeholder='휴대폰 번호(010-0000-0000)'onChangeText={n=>setPhone(n)}/>

@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 
-import {Text,TextInput,View, Button, StyleSheet, Alert, Dimensions, TouchableOpacity, AsyncStorage
+import {Text,TextInput,View, Button, StyleSheet, Alert, Dimensions, TouchableOpacity
 } from 'react-native';
 
 import axios from 'axios';
-import { useEffect } from 'react/cjs/react.production.min';
 
-//import AsyncStorage from '@react-native-community/async-storage';
-const {width, height} = Dimensions.get('window')
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useDispatch } from 'react-redux';
+import checkLogin from '../../redux/actions';
+import { ScrollView, TapGestureHandler } from 'react-native-gesture-handler';
 
-const Login = ({navigation, setLoggedIn}) =>{
+const {width, height} = Dimensions.get('window') 
+
+const Login = ({navigation}) =>{
     const [id, setId] = useState('');
     const [passwd, setPasswd] = useState('');
+    const [secretpasswd, setSecretpasswd] = useState('');
     const [checkPoint, setCheckPoint] = useState(false);
- 
+    const dispatch = useDispatch();
     
     const onAutoLogin = () =>{
         //asyncstorage에 auto설정 /
         
     }
+
+
     const onLogin = async() =>{
         //확인
         console.log(passwd);
@@ -40,11 +46,11 @@ const Login = ({navigation, setLoggedIn}) =>{
                 'id' : id.toLowerCase(),
                 'passwd': passwd,
             }
-
+            
 
             await axios.post(`/login`,body)
             .then((res)=>{
-                if(res.data!=false)
+                if(res.data!=false) 
                 {
                     //asyncstorage에 아이디 저장
                     Alert.alert(
@@ -53,8 +59,9 @@ const Login = ({navigation, setLoggedIn}) =>{
                         [
                         {
                             text: "확인",
-                            onPress: () => {
-                                setLoggedIn(true);
+                            onPress: async () => {
+                                await AsyncStorage.setItem('loggedIn', JSON.stringify(true));
+                                dispatch(checkLogin(true));
                             },
                             style: "cancel"
                         },
@@ -83,11 +90,12 @@ const Login = ({navigation, setLoggedIn}) =>{
     return(
            <View style={styles.container}>
                <Text style= {{marginTop : 250}}> 뭔가 간지나는 이미지 </Text>
+               <ScrollView>
                <View style = {styles.inputContainer}>
                 <Text></Text>
-                <TextInput style = {styles.input} placeholder="👤 아이디" onChangeText={n=>setId(n)}/>
-                <TextInput style = {styles.input} placeholder=" 🔒 비밀번호" onChangeText={n=>setPasswd(n)}/>
-               </View>
+                <TextInput style = {styles.input} placeholder="👤 아이디"   onChangeText={n=>{setId(n)}}/>
+                <TextInput style = {styles.input} placeholder=" 🔒 비밀번호" secureTextEntry = {true} onChangeText={n=>{setPasswd(n)}}/>
+               </View> 
                {/*
                <View style = {styles.checkContainer}>
                     <TouchableOpacity style={[styles.checkPoint , checkPoint && styles.checked]} onPress={()=>{setCheckPoint(!checkPoint)}}>
@@ -107,7 +115,7 @@ const Login = ({navigation, setLoggedIn}) =>{
                 onPress = {()=>{ navigation.navigate("Register"); }}>
                     <Text style = {styles.regText}>회원가입</Text>
                 </TouchableOpacity>
-              
+                </ScrollView>
                
            </View> 
     )
