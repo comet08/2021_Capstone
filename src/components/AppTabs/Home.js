@@ -23,8 +23,10 @@ const Home = ({navigation}) =>{
   //운동 시작 누르면 터미널에 write 해서 s 보내기
   //운동 종료 누르면 터미널에 write 해서 e 보내기
   //시리얼로 들어온 값 받은 다음 내 전력량 갱신
+  
   const refreshEnergy = (e) => {
     setEnergy(e);
+    return e;
   }
 
   const connect = (device) => {
