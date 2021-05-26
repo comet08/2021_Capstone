@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {Text,TextInput,View, Button, StyleSheet
 } from 'react-native';
 
-import Home from './src/components/AppTabs/Home';
+//import Home from './src/components/AppTabs/Home';
 
 const Donate = ({navigation}) =>{
   const [energy, setEnergy] = useState(0);
@@ -23,27 +23,11 @@ const Donate = ({navigation}) =>{
       'place' : place
     }
 
-    await axios.post(`/donate`,body)
-    .then((res)=>{
 
-    }
-    .catch((err)=>{
-      console.log("donate error : ");
-      console.log(err);
-    })
   }
 
   const refreshPlaces = () => {
-    await axios.get(`/getPlaces`)
-    .then((res)=>{
-      if(res.data) {
-        setPlaces(data);
-      }
-      console.log(res.data);
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
+
 
   }
 
@@ -58,7 +42,7 @@ const Donate = ({navigation}) =>{
     <Text style={styles.titleText}>기부하기</Text>
       <Text style={styles.normalText}>내 전력량 : {energy}</Text>
       <TextInput style = {styles.input} placeholder="기부할 전력량" onChangeText={n=>{setSendEnergy(n)}}/>
-      <Dropdown label='Favorite Fruit' data={places}/>
+      <Dropdown label='기부할 곳' data={places}/>
       <TouchableOpacity style = {styles.donateButton} onPress = {() => checkEnergy()}>
         <Text style={styles.donateText}>기부하기</Text>
       </TouchableOpacity>
@@ -68,9 +52,6 @@ const Donate = ({navigation}) =>{
 }
 
 export default Donate;
-
-
-
 
 
 const styles = StyleSheet.create({

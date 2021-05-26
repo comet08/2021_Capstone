@@ -15,44 +15,52 @@ const Home = ({navigation}) =>{
   const [energy, setEnergy] = useState(0);
   const [run, setRun] = useState(false);
   const [runText, setRunText] = useState("운동하기");
+  const [isEnabled, setIsEnabled] = useState("false");
 
-  //먼저 블루투스랑 아두이노 연결 - 사용자가 직접 해야함
-  //기기랑 연결되었으면 운동 시작 누를 수 있다
-  //블루투스 안켜졌으면 alert 블루투스를 켜고 운동기기와 연결해주세요
-  //기기랑 연결 안되었으면 운동 시작 누르면 alert 운동기기와 연결이 되지 않았습니다 표시
-  //운동 시작 누르면 터미널에 write 해서 s 보내기
-  //운동 종료 누르면 터미널에 write 해서 e 보내기
-  //시리얼로 들어온 값 받은 다음 내 전력량 갱신
-  
   const refreshEnergy = (e) => {
-    setEnergy(e);
-    return e;
+    axios.get('/energy', props.id)
+    .then(function(){
+      setEnergy(e);
+      return e;
+    })
+    .catch(function(error){
+      console.log("에너지 가져오기 에러");
+    })
   }
 
   const connect = (device) => {
-    this.setState({ connecting: true })
-    BluetoothSerial.connect(device.id)
+    BluetoothSerial.connect(device)
     .then((res) => {
-      Toast.showShortBottom(`Connected to device ${device.name}`)
-      this.setState({ device, connected: true, connecting: false })
+      console.log("연결됨")
+      BluetoothSerial.write('s')
+      .then((res) => {
+        setRunText("운동종료")
+        console.log("운동시작됨")
+      })
+      .catch((err) => console.log("운동시작 실패"))
     })
-    .catch((err) => Toast.showShortBottom(err.message))
+    .catch((err) => Alert.alert("장치와 연결 실패"))
   }
 
 
   const onRun = () => {
-    connect("arduino")
+    if (runText == "운동하기"){
+      BluetoothSerial.requestEnable()
+      .then((res) => setIsEnabled(true))
+      .catch((err) => Alert.alert("블루투스를 켜주세요"))
 
-    BluetoothSerial.enable()
-    .then((res) => this.setState({ isEnabled: true }))
-    .catch((err) => console.log("error!"))
-
-
-  }
-
-  const offRun = () => {
-
-
+      if (isEnabled == true){
+        connect("98:D3:61:F9:90:8C")
+      }
+    }
+    else {
+      BluetoothSerial.write('e')
+      setRunText("운동시작")
+      BluetoothSerial.disable()
+      .then((res) => setIsEnabled(false))
+      .catch((err) => console.log("블루투스 끄기 실패"))
+      refreshEnergy()
+    }
   }
 
   return (
