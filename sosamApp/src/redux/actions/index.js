@@ -1,10 +1,11 @@
 const CHECK_LOGIN = 'CHECK_LOGIN';
 
-const checkLogin = (check)=>{ 
+const checkLogin = (check, uid)=>{ 
     return((dispatch)=>{
         dispatch({
             type : CHECK_LOGIN,
-            loggedIn : check
+            loggedIn : check,
+            uid : uid
         });
     })
 }
