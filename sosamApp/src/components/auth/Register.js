@@ -4,6 +4,8 @@ import {Text,TextInput,View, Button, StyleSheet, Alert,
     TouchableOpacity, Dimensions, ScrollView
 } from 'react-native';
 
+import url from '../../url'
+
 const {width, height} = Dimensions.get('window')
 
 const Register = ({navigation}) =>{
@@ -36,7 +38,7 @@ const Register = ({navigation}) =>{
         }
         else{
             console.log(id);
-            await axios.get(`/idcheck?id=${id.toLocaleLowerCase()}`)
+            await axios.get(`http://${url}/idcheck?id=${id.toLocaleLowerCase()}`)
             .then((res)=>{   
                 console.log(res.data)  
                 if(!res.data)
@@ -143,7 +145,7 @@ const Register = ({navigation}) =>{
             'message' : ''
         }
 
-        await axios.post(`/register`,body)
+        await axios.post(`http://${url}/register`,body)
         .then((res)=>{
             if(res.data)
             {
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
         marginVertical : width/30,
     },
     regButton : {
-        fontSize : 30,
+        fontSize : 25,
         fontFamily: 'nanumbarungothic',
         color : 'white',
         textAlign : 'center',
@@ -287,7 +289,7 @@ const styles = StyleSheet.create({
         backgroundColor : 'white',
         borderBottomColor : 'grey',
         borderBottomWidth : 2,
-        fontSize : width/25,
+        fontSize : width/28,
         width : width-width/20,
         marginVertical  : width/60,
     },
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
     checkText : {
         color : 'black',
         fontFamily : 'nanumbarungothic',
-        fontSize : 17,
+        fontSize :width/28,
     }
 
 
