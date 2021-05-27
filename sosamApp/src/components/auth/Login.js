@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux';
 import checkLogin from '../../redux/actions';
 import { ScrollView, TapGestureHandler } from 'react-native-gesture-handler';
 
+import url from '../../url'
+
 const {width, height} = Dimensions.get('window') 
 
 const Login = ({navigation}) =>{
@@ -19,15 +21,9 @@ const Login = ({navigation}) =>{
     const [checkPoint, setCheckPoint] = useState(false);
     const dispatch = useDispatch();
     
-    const onAutoLogin = () =>{
-        //asyncstorage에 auto설정 /
-        
-    }
-
 
     const onLogin = async() =>{
         //확인
-        console.log(passwd);
         if(id=='' || passwd==''){
             Alert.alert(
                 "실패",
@@ -48,7 +44,7 @@ const Login = ({navigation}) =>{
             }
             
 
-            await axios.post(`/login`,body)
+            await axios.post(`http://${url}/login`,body)
             .then((res)=>{
                 if(res.data!=false) 
                 {
@@ -61,7 +57,7 @@ const Login = ({navigation}) =>{
                             text: "확인",
                             onPress: async () => {
                                 await AsyncStorage.setItem('loggedIn', JSON.stringify(true));
-                                dispatch(checkLogin(true));
+                                dispatch(checkLogin(true, body.id));
                             },
                             style: "cancel"
                         },
@@ -93,7 +89,7 @@ const Login = ({navigation}) =>{
                <ScrollView>
                <View style = {styles.inputContainer}>
                 <Text></Text>
-                <TextInput style = {styles.input} placeholder="👤 아이디"   onChangeText={n=>{setId(n)}}/>
+                <TextInput style = {styles.input} placeholder="  👤 아이디"   onChangeText={n=>{setId(n)}}/>
                 <TextInput style = {styles.input} placeholder=" 🔒 비밀번호" secureTextEntry = {true} onChangeText={n=>{setPasswd(n)}}/>
                </View> 
                {/*
