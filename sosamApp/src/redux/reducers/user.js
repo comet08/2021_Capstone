@@ -1,13 +1,20 @@
+const CHECK_LOGIN = 'CHECK_LOGIN';
+
+
 const initialState = {
-    loggedIn : false
+    loggedIn : false,
+    uid : ''
 };
 
 const user = (state = initialState, action ) => {
-    return {
-        ...state,
-        loggedIn : action.loggedIn,
-        uid : action.uid
-    }
+    if(action.type == CHECK_LOGIN)
+        return {
+            ...state,
+            loggedIn : action.loggedIn,
+            uid : action.uid
+        }
+    else
+        return state;
 }
 
 export default user;

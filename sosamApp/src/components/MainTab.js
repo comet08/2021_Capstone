@@ -12,7 +12,7 @@ import Discount from './AppTabs/Discount';
 import Donate from './AppTabs/Donate';
 
 const Tab = createBottomTabNavigator();
-const iconSize = 40
+const iconSize = 35
 
 export default function MainTab(){
     
