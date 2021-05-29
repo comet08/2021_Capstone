@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Component} from 'react';
 
 import {
+  Animated,
   Text,
   TextInput,
   View,
@@ -9,21 +10,25 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import url from '../../url'
+import axios from 'axios';
 import BluetoothSerial from 'react-native-bluetooth-serial';
+import { useSelector, shallowEqual } from 'react-redux';
 
 const Home = ({navigation}) =>{
   const [energy, setEnergy] = useState(0);
   const [run, setRun] = useState(false);
   const [runText, setRunText] = useState("운동하기");
   const [isEnabled, setIsEnabled] = useState("false");
+  const [id, setId] = useState("daun");
+  const userstate = useSelector((state)=>state.user, shallowEqual);
 
-  const refreshEnergy = (e) => {
-    axios.get('/energy', props.id)
-    .then(function(){
-      setEnergy(e);
-      return e;
+  const refreshEnergy = () => {
+    axios.get(`http://${url}/energy`, {id : userstate.uid})
+    .then((res) => {
+      setEnergy(res.data[0].["amount"]);
     })
-    .catch(function(error){
+    .catch((err) => {
       console.log("에너지 가져오기 에러");
     })
   }
@@ -55,13 +60,17 @@ const Home = ({navigation}) =>{
     }
     else {
       BluetoothSerial.write('e')
-      setRunText("운동시작")
-      BluetoothSerial.disable()
+      setRunText("운동하기")
+      BluetoothSerial.disconnect()
       .then((res) => setIsEnabled(false))
       .catch((err) => console.log("블루투스 끄기 실패"))
       refreshEnergy()
     }
   }
+
+  useEffect(()=>{
+    refreshEnergy();
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -77,7 +86,7 @@ const Home = ({navigation}) =>{
       <TouchableOpacity style = {styles.discountButton} onPress = {() => navigation.navigate("Discount")}>
         <Text style={styles.discountText}>할인받기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style = {styles.donateButton} onPress = {() => navigation.navigate("Donate")}>
+      <TouchableOpacity style = {styles.donateButton} onPress = {() => { navigation.navigate("Donate")}}>
         <Text style={styles.donateText}>기부하기</Text>
       </TouchableOpacity>
     </View>
@@ -99,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 50
   },
   runButton : {
-    backgroundColor : '#2196F3',
+    backgroundColor : 'rgb(7, 101, 38)',
     flexDirection : 'row',
     width : 209,
     height : 200,
