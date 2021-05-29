@@ -3,21 +3,24 @@ import React, { useState } from 'react';
 
 import {SafeAreaView, StyleSheet, View, Text, TextInput, Button, ScrollView
 } from 'react-native';
+import DeprecatedEdgeInsetsPropType from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedEdgeInsetsPropType';
 
 
 const Rank = ({navigation}) =>{
 
-  /*const [amount, setUname] = useState("이름 표시");
-  const [nickname, setNname] = useState("닉네임 표시");
-  const [message, setPh]= useState('메시지 표시');
-  */
+  const [data, setData] = useState(['1', '2', '3', '4']);
+  const [isLoad, setisLoad] = useState(false);
+  const [rankLoad, setrankLoad] = useState(true);
 
-  const amount = ['1', '2', '3', '4']
-  const nickname = ['1', '2', '3', '4']
-  const message = ['1', '2', '3', '4']
-
+  const [myrank, setMyrank] = useState("랭크 표시");
+  const [myid, setMyid] = useState("아이디 표시");
+  const [uname, setUname] = useState("이름 표시");
+  const [nname, setNname] = useState("닉네임 표시");
+  const [message, setMessage] = useState("메시지 표시");
+  
   const road = () => {
-    fetch("http://3.15.230.223/rank", {
+
+    fetch("http://13.59.42.230/userinfo", {
       method: "get",
       headers: {
           'Accept': 'application/json',
@@ -29,78 +32,118 @@ const Rank = ({navigation}) =>{
     .then((res)=>res.json())
     .then((json)=>{ 
       console.log(json[0]);
-      //data: json[0].amount,
+
+      setMyid(json[0].id);
+      setUname(json[0].name);
+      setNname(json[0].nickname);
+      setMessage(json[0].message);
+  }) 
 
 
+    fetch("http://13.59.42.230/rank", {
+      method: "get",
+      headers: {
+          'Accept': 'application/json',
+          'content-type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify(),
   })
+    .then((res)=>res.json())
+    .then((json)=>{ 
+      console.log(json);
+      setData(json);
+  })
+  
 }
 
+/*
+const findmyrank = data.map((d, idx) => {
+  console.log(d.id);
+  if(d.id == myid){
+    setMyrank(d.rank)
+    //break;
+  }
+    return d.rank;
+});
+*/
 
+/*
+    const findmyrank = () => {
+      console.log("로그확인")
+      console.log(data.length)
+      for(let i = 0; i < data.length; i++){
+        console.log(i)
+        console.log(data)
+        if(data[i].id == myid){
+          setMyrank(data[i].rank)
+          console.log(data[i].rank)
+          break;
+        }
+      }
+    }*/
+
+    if (!isLoad) {
+      road()
+      setisLoad(true)
+      setrankLoad(false)
+    }
+
+    if (!rankLoad) {
+      const findmyrank = data.map((d, idx) => {
+        //console.log(d.id);
+        if(d.id == myid){
+          setMyrank(d.rank)
+          setrankLoad(true)
+          //return d.rank;
+        }
+          //return d.rank;
+      });
+    }
+
+
+  //const amountList = amount.map((amountM, index) => ({amountM}))
+  const dataList = data.map( d =>
+
+    <View style={styles.rankbox}>
+    <Text style={styles.ranknum}> ▪ {d.rank} 위 ▪ </Text>
+    <Text> 전력량 : 
+    <Text style={styles.ranklist}> {'\t\t\t'} {d.amount} </Text>
+    </Text>
+    <Text> 닉네임 : 
+    <Text style={styles.ranklist}> {'\t\t\t'} {d.nickname} </Text>
+    </Text>
+    <Text> 메세지 : 
+    <Text style={styles.ranklist}> {'\t\t\t'} {d.message} </Text>
+    </Text>
+  </View>
+
+  )
 
 
     return(
+
            <View style={styles.container}>
               <Text style={styles.appTitle}>순위</Text>
 
 
 
               <View style={styles.myFrame}>
-          <Text style={styles.uname}> 이름 
-            <Text style={styles.urank}> [내 순위] </Text>
+          <Text style={styles.myranktitle}> 내 순위 </Text>
+          <Text style={styles.uname}> {nname} : 
+            <Text style={styles.urank}> {myrank} 위</Text>
           </Text>
         </View>
 
         <View style={styles.frame}>
         <ScrollView>
-          <Text style={styles.ranklist}> [순위 리스트 표시] </Text>
-          <Text style={styles.ranklist}> {amount[0]} </Text>
-          <Text style={styles.ranklist}> {nickname[0]} </Text>
-          <Text style={styles.ranklist}> {message[0]} </Text>
 
+          {dataList}
 
-
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-          <Text style={styles.ranklist}> 스크롤 뷰 확인용 </Text>
-
-
-          <Text style={styles.ranklist}> 값 표시 </Text>
-          <Text style={styles.ranklist}> 값 표시가 왜 안될까 </Text>
 
           </ScrollView>
         </View>
 
-
-
-
-              <Text>Rank</Text>
            </View> 
     )
 }
@@ -155,6 +198,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
 
   },
+
+  myranktitle: {
+    color: 'gray',
+    textAlign:'center',
+  },
+  rankbox: {
+    borderTopLeftRadius: 5, //각
+    borderTopRightRadius: 5, //각
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+    flex:1,
+    borderColor:'#bbb',
+    borderWidth:1,
+    margin:10,
+    padding:10,
+  },
+  ranknum: {
+    padding:0,
+    textAlign: 'center',
+    fontSize:  15,
+    borderBottomColor:'#ddd',
+    borderBottomWidth:1,
+    //textAlign: 'center',
+    //justifyContent : 'center'
+  },
+
   uname: {
     padding: 10,
     borderBottomColor: '#bbb',
