@@ -1,63 +1,65 @@
-  
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import {SafeAreaView, StyleSheet, View, Text, TextInput, Button, ScrollView
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Button,
+  ScrollView,
 } from 'react-native';
 import DeprecatedEdgeInsetsPropType from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedEdgeInsetsPropType';
+import url from '../../url';
 
-
-const Rank = ({navigation}) =>{
-
+const Rank = ({navigation}) => {
   const [data, setData] = useState(['1', '2', '3', '4']);
   const [isLoad, setisLoad] = useState(false);
   const [rankLoad, setrankLoad] = useState(true);
 
-  const [myrank, setMyrank] = useState("랭크 표시");
-  const [myid, setMyid] = useState("아이디 표시");
-  const [uname, setUname] = useState("이름 표시");
-  const [nname, setNname] = useState("닉네임 표시");
-  const [message, setMessage] = useState("메시지 표시");
-  
+  const [myrank, setMyrank] = useState('랭크 표시');
+  const [myid, setMyid] = useState('아이디 표시');
+  const [uname, setUname] = useState('이름 표시');
+  const [nname, setNname] = useState('닉네임 표시');
+  const [message, setMessage] = useState('메시지 표시');
+
   const road = () => {
-
-    fetch("http://13.59.42.230/userinfo", {
-      method: "get",
+    fetch(`http://${url}/userinfo`, {
+      method: 'get',
       headers: {
-          'Accept': 'application/json',
-          'content-type': 'application/json',
+        Accept: 'application/json',
+        'content-type': 'application/json',
       },
       credentials: 'include',
       body: JSON.stringify(),
-  })
-    .then((res)=>res.json())
-    .then((json)=>{ 
-      console.log(json[0]);
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log(json[0]);
 
-      setMyid(json[0].id);
-      setUname(json[0].name);
-      setNname(json[0].nickname);
-      setMessage(json[0].message);
-  }) 
+        setMyid(json[0].id);
+        setUname(json[0].name);
+        setNname(json[0].nickname);
+        setMessage(json[0].message);
+      });
 
-
-    fetch("http://13.59.42.230/rank", {
-      method: "get",
+    fetch(`http://${url}/rank`, {
+      method: 'get',
       headers: {
-          'Accept': 'application/json',
-          'content-type': 'application/json',
+        Accept: 'application/json',
+        'content-type': 'application/json',
       },
       credentials: 'include',
       body: JSON.stringify(),
-  })
-    .then((res)=>res.json())
-    .then((json)=>{ 
-      console.log(json);
-      setData(json);
-  })
-  
-}
+    })
+      .then(res => res.json())
+      .then(json => {
+        console.log(json);
+        setData(json);
+      });
+  };
 
-/*
+  /*
 const findmyrank = data.map((d, idx) => {
   console.log(d.id);
   if(d.id == myid){
@@ -68,7 +70,7 @@ const findmyrank = data.map((d, idx) => {
 });
 */
 
-/*
+  /*
     const findmyrank = () => {
       console.log("로그확인")
       console.log(data.length)
@@ -83,82 +85,80 @@ const findmyrank = data.map((d, idx) => {
       }
     }*/
 
-    if (!isLoad) {
-      road()
-      setisLoad(true)
-      setrankLoad(false)
-    }
+  if (!isLoad) {
+    road();
+    setisLoad(true);
+    setrankLoad(false);
+  }
 
-    if (!rankLoad) {
-      const findmyrank = data.map((d, idx) => {
-        //console.log(d.id);
-        if(d.id == myid){
-          setMyrank(d.rank)
-          setrankLoad(true)
-          //return d.rank;
-        }
-          //return d.rank;
-      });
-    }
-
+  if (!rankLoad) {
+    const findmyrank = data.map((d, idx) => {
+      //console.log(d.id);
+      if (d.id == myid) {
+        setMyrank(d.rank);
+        setrankLoad(true);
+        //return d.rank;
+      }
+      //return d.rank;
+    });
+  }
 
   //const amountList = amount.map((amountM, index) => ({amountM}))
-  const dataList = data.map( d =>
+  const dataList = data.map(d => (
+    <View key={d.rank} style={styles.rankbox}>
+      <Text style={styles.ranknum}> ▪ {d.rank} 위 ▪ </Text>
+      <Text>
+        {' '} 전력량 :
+        <Text style={styles.ranklist}>
+          {' '}
+          {'\t\t\t'} {d.amount}{' '}
+        </Text>
+      </Text>
+      <Text>
+        {' '} 닉네임 :
+        <Text style={styles.ranklist}>
+          {' '}
+          {'\t\t\t'} {d.nickname}{' '}
+        </Text>
+      </Text>
+      <Text>
+        {' '} 메세지 :
+        <Text style={styles.ranklist}>
+          {' '}
+          {'\t\t\t'} {d.message}{' '}
+        </Text>
+      </Text>
+    </View>
+  ));
 
-    <View style={styles.rankbox}>
-    <Text style={styles.ranknum}> ▪ {d.rank} 위 ▪ </Text>
-    <Text> 전력량 : 
-    <Text style={styles.ranklist}> {'\t\t\t'} {d.amount} </Text>
-    </Text>
-    <Text> 닉네임 : 
-    <Text style={styles.ranklist}> {'\t\t\t'} {d.nickname} </Text>
-    </Text>
-    <Text> 메세지 : 
-    <Text style={styles.ranklist}> {'\t\t\t'} {d.message} </Text>
-    </Text>
-  </View>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.appTitle}>순위</Text>
 
-  )
+      <View style={styles.myFrame}>
+        <Text style={styles.myranktitle}> 내 순위 </Text>
+        <Text style={styles.uname}>
+          {' '} {nname} :<Text style={styles.urank}> {myrank} 위</Text>
+        </Text>
+      </View>
 
-
-    return(
-
-           <View style={styles.container}>
-              <Text style={styles.appTitle}>순위</Text>
-
-
-
-              <View style={styles.myFrame}>
-          <Text style={styles.myranktitle}> 내 순위 </Text>
-          <Text style={styles.uname}> {nname} : 
-            <Text style={styles.urank}> {myrank} 위</Text>
-          </Text>
-        </View>
-
-        <View style={styles.frame}>
-        <ScrollView>
-
-          {dataList}
-
-
-          </ScrollView>
-        </View>
-
-           </View> 
-    )
-}
-  
+      <View style={styles.frame}>
+        <ScrollView>{dataList}</ScrollView>
+      </View>
+    </View>
+  );
+};
 
 export default Rank;
 
 const styles = StyleSheet.create({
-    container : {
-        backgroundColor : 'green',
-        flex:1,
-       //alignItems : 'center',
-        //flexDirection : 'column'
-    },
-   
+  container: {
+    backgroundColor: 'green',
+    flex: 1,
+    //alignItems : 'center',
+    //flexDirection : 'column'
+  },
+
   //타이틀
   appTitle: {
     color: 'black',
@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     padding: 15,
     justifyContent: 'center',
-
   },
   frame: {
     backgroundColor: '#eee',
@@ -196,30 +195,29 @@ const styles = StyleSheet.create({
 
     padding: 15,
     justifyContent: 'center',
-
   },
 
   myranktitle: {
     color: 'gray',
-    textAlign:'center',
+    textAlign: 'center',
   },
   rankbox: {
     borderTopLeftRadius: 5, //각
     borderTopRightRadius: 5, //각
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
-    flex:1,
-    borderColor:'#bbb',
-    borderWidth:1,
-    margin:10,
-    padding:10,
+    flex: 1,
+    borderColor: '#bbb',
+    borderWidth: 1,
+    margin: 10,
+    padding: 10,
   },
   ranknum: {
-    padding:0,
+    padding: 0,
     textAlign: 'center',
-    fontSize:  15,
-    borderBottomColor:'#ddd',
-    borderBottomWidth:1,
+    fontSize: 15,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
     //textAlign: 'center',
     //justifyContent : 'center'
   },
@@ -235,5 +233,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 35,
   },
-
-})
+});
