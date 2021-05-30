@@ -24,7 +24,7 @@ const Discount = ({navigation}) =>{
   }
 
   const checkEnergy = () => {
-    if (energy > checkEnergy){
+    if (energy < checkEnergy){
       Alert.alert("가지고 있는 전력량보다 할인받을 전력량이 많습니다.")
     }
     else sendBody()
@@ -34,10 +34,10 @@ const Discount = ({navigation}) =>{
     let today = new Date();
     let body = {
       'id' : userstate.uid,
-      'date' : today.getDate(),
+      'date' : today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate(),
       'time' : today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(),
       'energy' : sendEnergy,
-      'address' : address
+      'donateto' : sendPlace
     }
 
     axios.post(`http://${url}/discount`, body)

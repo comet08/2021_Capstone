@@ -30,7 +30,7 @@ const Donate = ({navigation}) =>{
   }
 
   const checkEnergy = () => {
-    if (energy > checkEnergy){
+    if (energy < checkEnergy){
       Alert.alert("가지고 있는 전력량보다 기부할 전력량이 많습니다.")
     }
     else {
@@ -42,7 +42,7 @@ const Donate = ({navigation}) =>{
     let today = new Date();
     let body = {
       'id' : userstate.uid,
-      'date' : today.getDate(),
+      'date' : today.getFullYear() + "-" + today.getMonth() + "-" + today.getDate(),
       'time' : today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(),
       'energy' : sendEnergy,
       'donateto' : sendPlace
