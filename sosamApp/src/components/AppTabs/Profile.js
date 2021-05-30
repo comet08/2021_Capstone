@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import {Text,TextInput,View, Button, StyleSheet, TouchableOpacity, SafeAreaView, Alert
+import {Text,TextInput,View, Button, StyleSheet, TouchableOpacity, SafeAreaView, Alert, ScrollView
 } from 'react-native';
 
 import axios from 'axios';
@@ -13,7 +13,7 @@ const Profile = ({navigation, setLoggedIn}) =>{
     const dispatch = useDispatch();
     const onLogout = async ()=>{
         //asyncstorage에서 지우기
-        await axios.get(`/logout`)
+        await axios.get(`http://13.59.42.230/logout`)
         .then((res)=>{
             if(res.data) {
                 AsyncStorage.setItem('loggedIn', JSON.stringify(false));
@@ -38,14 +38,27 @@ const Profile = ({navigation, setLoggedIn}) =>{
 
     const [uname, setUname] = useState("이름 표시");
     const [nname, setNname] = useState("닉네임 표시");
-    const [ph, setPh]= useState('번호 표시');
-    const [addr, setAddr] = useState('주소 표시');
-    const [age, setAge] = useState('연령 표시');
+    const [message, setMessage] = useState("메시지 표시");
+    const [ph, setPh]= useState("번호 표시");
+    const [addr, setAddr] = useState("주소 표시");
+    const [age, setAge] = useState("연령 표시");
     const [status, setstatus] = useState(true);
+    const [isLoad, setisLoad] = useState(false);
+
+
+    //textinput
+    const [utext, setUtext] = useState("");
+    const [ntext, setNtext] = useState("");
+    const [mtext, setMtext] = useState("");
+    const [ptext, setPtext]= useState("");
+    const [adtext, setAdtext] = useState("");
+    const [agtext, setAgtext] = useState("");
+
+
 
 
       const road = () => {
-        fetch("http://52.15.171.192/userinfo", {
+        fetch("http://13.59.42.230/userinfo", {
           method: "get",
           headers: {
               'Accept': 'application/json',
@@ -60,6 +73,7 @@ const Profile = ({navigation, setLoggedIn}) =>{
     
           setUname(json[0].name);
           setNname(json[0].nickname);
+          setMessage(json[0].message);
           setPh(json[0].phone);
           setAddr(json[0].address);
           setAge(json[0].age);
@@ -67,8 +81,49 @@ const Profile = ({navigation, setLoggedIn}) =>{
       }) 
       }
 
+
+
+
+        //사용자 정보 수정하기
+      const updateInfo = () => {
+        const post = {
+          name : utext,
+          address : adtext,
+          phone : ptext,
+          age : agtext,
+          message : mtext,
+          nickname : ntext
+        }
+
+        fetch("http://13.59.42.230/modifyinfo", {
+          method: "post",
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify(post), //메시지 추가하기
+        })
+        .then((res) => res.json())
+        .then((json) => {
+          console.log(json[0]);
+          
+        })
+      }
+
+
+
+
+
+
       const buttonPress = () => {
         //Alert.alert('정보 수정', '정보가 수정되었습니다.')
+
+        setUtext(uname);
+        setNtext(nname);
+        setMtext(message);
+        setPtext(ph);
+        setAdtext(addr);
+        setAgtext(age);
+
         setstatus(!status)
         //thisStatus = !thisStatus
       }
@@ -76,10 +131,22 @@ const Profile = ({navigation, setLoggedIn}) =>{
       const changePress = () => {
         setstatus(!status)
         //thisStatus = !thisStatus
+        //updateInfo()
+        
         Alert.alert('정보 수정', '정보가 수정되었습니다.')
+
+        updateInfo()
+
+
+        setisLoad(false)
+        //console.log(nname)
       }
 
-      road()
+      if (!isLoad) {
+        road()
+        setisLoad(true)
+      }
+      
       
     return(
            <View style={styles.container}>
@@ -97,6 +164,10 @@ const Profile = ({navigation, setLoggedIn}) =>{
                   <Text style={styles.info}> {nname} </Text>
                   </Text> 
 
+                  <Text style={styles.label}> 메시지 {'\t\t\t\t'}
+                  <Text style={styles.info}> {message} </Text>
+                  </Text> 
+
                   <Text style={styles.label}> 휴대폰 번호 {'\t\t\t\t'}
                   <Text style={styles.info}> {ph} </Text>
                   </Text>
@@ -112,10 +183,15 @@ const Profile = ({navigation, setLoggedIn}) =>{
                 </View>
                 :
                 <View style={styles.frame}>
+                <ScrollView>
+
+
+
                 <View style={styles.row}>
                 <View style={styles.inputWrap}>
                   <Text style={styles.label}> 이름 </Text>
                   <Text style={styles.label}> 닉네임 </Text>
+                  <Text style={styles.label}> 메시지 </Text>
                   <Text style={styles.label}> 휴대폰 번호 </Text>
                   <Text style={styles.label}> 주소 </Text>
                   <Text style={styles.label}> 연령</Text>
@@ -126,44 +202,54 @@ const Profile = ({navigation, setLoggedIn}) =>{
                       autoFocus={true}
                       style={styles.input} 
                       placeholder="이름"
-                      onChangeText={(uname) => setUname({uname})}
-                      value = {uname}
+                      onChangeText={(utext) => setUtext(utext)}
+                      value = {utext}
                       returnKeyType="next"
                   /> 
                   <TextInput 
                       autoFocus={true}
                       style={styles.input} 
                       placeholder="닉네임"
-                      onChangeText={(nname) => setNname({nname})}
-                      value = {nname}
+                      onChangeText={(ntext) => setNtext(ntext)}
+                      value = {ntext}
+                      returnKeyType="next"
+                  /> 
+                  <TextInput 
+                      style={styles.input} 
+                      placeholder="메시지"
+                      onChangeText={(mtext) => setMtext(mtext)}
+                      value = {mtext}
                       returnKeyType="next"
                   /> 
                   <TextInput 
                       style={styles.input} 
                       placeholder="번호 입력" 
-                      nChangeText={(ph) => setPh({ph})}
-                      value={ph}
+                      nChangeText={(ptext) => setPtext(ptext)}
+                      value={ptext}
                       returnKeyType="next"
                   /> 
                   <TextInput 
                       style={styles.input} 
                       placeholder="주소 입력" 
-                      onChangeText={(addr) => setAddr({addr})}
-                      value={addr}
+                      onChangeText={(adtext) => setAdtext(adtext)}
+                      value={adtext}
                       returnKeyType="next"
                   />
                   <TextInput
                       style={styles.input} 
                       type="number"
                       placeholder="연령 입력" 
-                      onChangeText={(age) => setAge({age})}
-                      value={age.toString()}
+                      onChangeText={(agtext) => setAgtext(agtext)}
+                      value={agtext}
                       keyboardType="numeric"
                       returnKeyType="next"
                   />
                   </View>
                   </View>
+
+                  </ScrollView>
                 </View>
+
             }
        
 
