@@ -32,8 +32,8 @@ const Donate = ({navigation}) => {
   const dispatch = useDispatch();
 
 
-  const checkEnergy = () => {
-    if (energy < sendEnergy) {
+  const onSubmit = () => {
+    if (userstate.energy < sendEnergy) {
       Alert.alert('가지고 있는 전력량보다 기부할 전력량이 많습니다.');
     } else {
       sendBody();
@@ -93,6 +93,7 @@ const Donate = ({navigation}) => {
       <TextInput
         style={styles.input}
         placeholder="기부할 전력량"
+        keyboardType="numeric"
         onChangeText={n => {
           setSendEnergy(n);
         }}
@@ -113,7 +114,7 @@ const Donate = ({navigation}) => {
       <View style={styles.center}>
       <TouchableOpacity
         style={styles.donateButton}
-        onPress={() => checkEnergy()}>
+        onPress={() => onSubmit()}>
         <Text style={styles.donateText}>기부하기</Text>
       </TouchableOpacity>
       </View>

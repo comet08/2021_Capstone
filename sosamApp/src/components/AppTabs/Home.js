@@ -53,7 +53,7 @@ const Home = ({navigation}) => {
         <DonateLog data={donateLog} />
         )
     } else if (type === "discount") {
-      setHist(
+      setHist( 
         <DiscountLog data={discountLog} />
         )
     }

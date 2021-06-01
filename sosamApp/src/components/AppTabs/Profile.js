@@ -124,6 +124,7 @@ const Profile = ({navigation, setLoggedIn}) => {
     setPtext(ph);
     setAdtext(addr);
     setAgtext(age);
+
     setstatus(!status);
     //thisStatus = !thisStatus
   };
@@ -249,10 +250,9 @@ const Profile = ({navigation, setLoggedIn}) => {
                 />
                 <TextInput
                   style={styles.input}
-                  type="number"
                   placeholder="생일 입력"
                   onChangeText={agtext => setAgtext(agtext)}
-                  value={agtext}
+                  value={String(agtext)} 
                   keyboardType="numeric"
                   returnKeyType="next"
                 />

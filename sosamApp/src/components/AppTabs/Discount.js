@@ -25,8 +25,8 @@ const Discount = ({navigation}) => {
   const dispatch = useDispatch();
   const userstate = useSelector(state => state.user);
 
-  const checkEnergy = () => {
-    if (energy < sendEnergy) {
+  const onSubmit = () => {
+    if (userstate.energy < sendEnergy) {
       Alert.alert('가지고 있는 전력량보다 할인받을 전력량이 많습니다.');
     }
     else
@@ -85,6 +85,7 @@ const Discount = ({navigation}) => {
       <TextInput
         style={styles.input}
         placeholder="할인받을 전력량"
+        keyboardType="numeric"
         onChangeText={n => {
           setSendEnergy(n);
         }}
@@ -96,7 +97,7 @@ const Discount = ({navigation}) => {
         <View style={styles.center}>
         <TouchableOpacity
           style={styles.donateButton}
-          onPress={() => checkEnergy()}>
+          onPress={() => onSubmit()}>
           <Text style={styles.donateText}>할인받기</Text>
         </TouchableOpacity>
         </View>
