@@ -16,7 +16,7 @@ import axios from 'axios';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import checkLogin from '../../redux/actions';
+import {checkLogin} from '../../redux/actions';
 import {ScrollView, TapGestureHandler} from 'react-native-gesture-handler';
 
 import url from '../../url';
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     marginTop : 75,
   },
   login: {
-    backgroundColor: 'black',
+    backgroundColor: 'rgb(64,183,173)',
     flexDirection: 'row',
     width: width - 50,
     height: 60,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {},
   reg: {
-    backgroundColor: 'rgb(7, 101, 38)',
+    backgroundColor: 'black',
     flexDirection: 'row',
     width: width - 50,
     height: 60,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   regText: {
-    color: 'black',
+    color: 'white',
     fontSize: 20,
     fontFamily: bold,
   },

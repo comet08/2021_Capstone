@@ -8,12 +8,16 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  Dimensions
 } from 'react-native';
 import url from '../../url';
 import axios from 'axios';
-import {useSelector, shallowEqual} from 'react-redux';
+import {useSelector, shallowEqual, useDispatch} from 'react-redux';
 import {Picker} from '@react-native-picker/picker';
 import {bold , plane} from '../../font'
+
+const {width, height} = Dimensions.get('window')
+
 
 const Donate = ({navigation}) => {
   const [open, setOpen] = useState(false);
@@ -24,17 +28,9 @@ const Donate = ({navigation}) => {
   const [sendPlace, setSendPlace] = useState('');
   const [pi, setPi] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState();
+  const userstate = useSelector(state => state.user, shallowEqual);
+  const dispatch = useDispatch();
 
-  const refreshEnergy = () => {
-    axios
-      .get(`http://${url}/energy`)
-      .then(res => {
-        setEnergy(res.data[0].amount);
-      })
-      .catch(err => {
-        console.log('에너지 가져오기 에러');
-      });
-  };
 
   const checkEnergy = () => {
     if (energy < sendEnergy) {
@@ -46,8 +42,7 @@ const Donate = ({navigation}) => {
 
   const sendBody = () => {
     let today = new Date();
-    let body = {
-      id: userstate.uid,
+    let body = { 
       date: today.toISOString().split('T')[0],
       time: today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds(),
       energy: sendEnergy,
@@ -64,7 +59,8 @@ const Donate = ({navigation}) => {
       .catch(err => {
         Alert.alert('기부 실패');
       });
-  };
+      dispatch(checkEnergy());
+  };  
 
   const refreshPlaces = () => {
     axios
@@ -75,7 +71,7 @@ const Donate = ({navigation}) => {
         setPi(
           res.data.map((item, index) => {
             return (
-              <Picker.Item key={index} label={item.place} value={item.place} style={styles.pickerItem}/>
+              <Picker.Item key={index} color='black' backgroundColor ='white' label={item.place} value={item.place} style={styles.pickerItem}/>
             );
           }),
         );
@@ -87,13 +83,13 @@ const Donate = ({navigation}) => {
 
   useEffect(() => {
     refreshPlaces();
-    refreshEnergy();
   }, []);
 
   return (
     <View style={styles.container}>
+    <View style={styles.body}>
       <Text style={styles.titleText}>기부하기</Text>
-      <Text style={styles.normalText}>내 전력량 : {energy}</Text>
+      <Text style={styles.normalText}>내 전력량 : {userstate.energy}</Text>
       <TextInput
         style={styles.input}
         placeholder="기부할 전력량"
@@ -102,14 +98,18 @@ const Donate = ({navigation}) => {
         }}
       />
       <Text style={styles.normalText}>기부할 곳을 선택해주세요.</Text>
+      
 
+      <View style={styles.picker}>
       <Picker
         selectedValue={sendPlace}
-        style={styles.picker}
+        itemStyle={styles.picker}
         placeholder="기부 장소"
         onValueChange={(itemValue, itemIndex) => setSendPlace(itemValue)}>
         {pi}
       </Picker>
+      </View>
+      </View>
       <View style={styles.center}>
       <TouchableOpacity
         style={styles.donateButton}
@@ -125,7 +125,7 @@ export default Donate;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgb(64,183,173)',
     flex: 1,
     flexDirection: 'column',
   },
@@ -144,22 +144,33 @@ const styles = StyleSheet.create({
     fontFamily : bold
   },
   normalText: {
-    borderBottomColor: 'grey',
-    borderBottomWidth: 2,
-    fontSize: 30,
+    fontSize: 22,
     marginTop: 40,
     fontFamily : plane
   },
   input: {
-    marginTop: 30,
-    fontSize: 25,
+    marginTop: 10,
+    fontSize: 20,
     borderBottomColor: 'grey',
     borderBottomWidth: 2,
-    fontFamily : plane
+    fontFamily : plane,
+    backgroundColor : 'white',
+    paddingLeft : 10,
+    borderRadius : 10,
+    elevation : 5,
+    paddingVertical : 15,
   },
   home: {
     marginTop : 10,
-    fontSize: 25,
+    fontSize: 20,
+    paddingVertical : 7,
+    paddingLeft : 10,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 2,
+    backgroundColor : 'white',
+    borderRadius : 10,
+    elevation : 5,
+    paddingVertical : 15,
   },
   place: {
     height: 50,
@@ -168,18 +179,30 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   donateButton: {
-    backgroundColor: 'rgb(64, 183, 173)',
+    backgroundColor: 'white',
     height: 64,
-    width: 128,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 20,
     marginRight: 20,
     marginTop: 50,
+    width: width - 50,
+    borderRadius : 10,
+    elevation : 10,
     
   },
   donateText: {
     fontSize: 30,
-    fontFamily: plane,
+    fontFamily: bold,
   },
+  pickerItem : {
+  },
+  picker:{
+    marginTop : 10,
+    backgroundColor : 'white',
+    width  : width-20,
+    alignContent : 'center',
+    borderRadius : 10,
+    elevation : 10,
+  }
 });

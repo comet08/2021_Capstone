@@ -19,82 +19,74 @@ import axios from 'axios';
 import BluetoothSerial from 'react-native-bluetooth-serial';
 import {useSelector, shallowEqual} from 'react-redux';
 import {bold , plane} from '../../font'
+import { checkEnergy } from '../../redux/actions';
+import { useDispatch } from 'react-redux';
 
+// 로그 페이지들
+import DiscountLog from './DiscountLog';
+import ExerLog from './ExerLog';
+import DonateLog from './DonateLog';
+ 
 const {width, height} = Dimensions.get('window')
+
 
 const Home = ({navigation}) => {
   const [energy, setEnergy] = useState(0);
-  const [log, setLog] = useState([]);
-  const [checked, setChecked] = React.useState("history");
+  const [exerLog, setExerLog] = useState([]);
+  const [discountLog, setDiscountLog] = useState([]);
+  const [donateLog, setDonateLog] = useState([]);
+  const [checked, setChecked] = useState("history");
   const [run, setRun] = useState(false);
   const [runText, setRunText] = useState('운동시작');
   const [isEnabled, setIsEnabled] = useState('false');
   const [hist, setHist] = useState([]);
-  const userstate = useSelector(state => state.user, shallowEqual);
-  
+  const userstate = useSelector(state => state.user);
+  const dispatch = useDispatch();
 
-  const histList = () => {
-    if (checked == "history") {
+  const histList = (type) => {
+    if (type === "history") {
         setHist(
-          <>
-          <View style={styles.historyTitleFrame}>
-            <Text style={styles.historyTitle}> 운동 내역 </Text>
-          </View>
-
-          <View style={styles.historyList}>
-            <ScrollView>
-            <Text style={styles.historyText}> 날짜 시작 끝 전력 </Text>
-            </ScrollView>
-          </View>
-          </>
+          <ExerLog data={exerLog} />
     )
-    } else if (checked == "donate") {
-      setHist(
-        <>
-          <View style={styles.historyTitleFrame}>
-            <Text style={styles.historyTitle}> 기부 내역 </Text>
-          </View>
-
-          <View style={styles.historyList}>
-            <ScrollView>
-            <Text style={styles.historyText}> 날짜 기부정보 전력 </Text>
-            </ScrollView>
-          </View>
-          </>
+    } else if (type === "donate") {
+      setHist( 
+        <DonateLog data={donateLog} />
         )
-    } else if (checked == "discount") {
+    } else if (type === "discount") {
       setHist(
-        <>
-          <View style={styles.historyTitleFrame}>
-            <Text style={styles.historyTitle}> 할인 내역 </Text>
-          </View>
-
-          <View style={styles.historyList}>
-            <ScrollView>
-            <Text style={styles.historyText}> 날짜 할인정보 전력 </Text>
-            </ScrollView>
-          </View>
-          </>
+        <DiscountLog data={discountLog} />
         )
     }
   }
 
-  const refreshEnergy = () => {
-    axios
-      .get(`http://${url}/energy`)
-      .then(res => {
-        setEnergy(res.data[0].amount);
-      })
-      .catch(err => {
-        console.log('에너지 가져오기 에러');
-      });
-  };
+  
 
-  const getLog = () => {
-    axios
-      .get(`http://${url}/log`)
+  const getLog = async () => {
+    await axios
+      .get(`http://${url}/logdis`)
       .then(res => {
         console.log(res.data);
+        setDiscountLog(res.data);
+      })  
+      .catch(err => {
+        console.log('로그  에러');
+      });
+
+      await axios
+      .get(`http://${url}/logdona`)
+      .then(res => {
+        console.log(res.data);
+        setDonateLog(res.data);
+      })  
+      .catch(err => {
+        console.log('로그  에러');
+      });
+
+      await axios
+      .get(`http://${url}/logele`)
+      .then(res => {
+        console.log(res.data);
+        setExerLog(res.data);
       })  
       .catch(err => {
         console.log('로그  에러');
@@ -133,21 +125,22 @@ const Home = ({navigation}) => {
           setRunText('운동시작');
         })
         .catch(err => console.log('블루투스 끄기 실패'));
-      refreshEnergy();
       getLog();
     }
-  };
+  }; 
 
   useEffect(() => {
-    refreshEnergy();
-    getLog();
+    dispatch(checkEnergy());
+    getLog(); 
+    console.log(donateLog);
+    histList();
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.head}>
         <Image style={styles.logo} source={require('../../logo.png')} />
-        <Text style={styles.myEnergy}> 내 에너지 : {energy} mA </Text>
+        <Text style={styles.myEnergy}> 내 에너지 : {userstate.energy} mA </Text>
       </View>
       <TouchableOpacity style={styles.runButton} onPress={onRun}>
           <Text style={styles.runText}>{runText}</Text>
@@ -156,21 +149,22 @@ const Home = ({navigation}) => {
 
     <View style={styles.row}>
       <RadioButton
-        value="history"
-        status={ checked === 'history' ? 'checked' : 'unchecked' }
-        onPress={() => {setChecked('history'); histList();}}
-      />
-      <RadioButton
         value="donate"
         status={ checked === 'donate' ? 'checked' : 'unchecked' }
-        onPress={() => { setChecked('donate'); histList(); }}
+        onPress={() => {setChecked('donate'); histList('donate')} }
       />
-      <RadioButton 
+      <RadioButton
+        value="history"
+        status={ checked === 'history' ? 'checked' : 'unchecked' }
+        onPress={() => {setChecked('history'); histList('history');}}
+      />
+      <RadioButton
         value="discount"
         status={ checked === 'discount' ? 'checked' : 'unchecked' }
-        onPress={() => {setChecked('discount'); histList();}}
+        onPress={() => {setChecked('discount'); histList('discount')}}
       />
     </View>
+
 
     <View style={styles.histFrame}>
       {hist}
@@ -262,51 +256,14 @@ const styles = StyleSheet.create({
   donateText: {
     fontSize: 30,
   },
-  historyTitleFrame: {
-    backgroundColor: '#ddd',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    marginLeft: 15,
-    marginRight: 15,
-    maxHeight: 100,
-    padding: 15,
-    justifyContent: 'center',
-  },
+  
   row: {
     flexDirection:'row',
     justifyContent: 'center',
   },
-  historyTitle: {
-    color: 'black',
-    textAlign: 'center',
-    fontFamily : bold,
-    fontSize : 15,
-  },
-  historyList: {
-    backgroundColor: '#eee',
-    //flex: 1,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-    marginLeft: 15,
-    marginRight: 15,
-    padding: 10,
-    justifyContent: 'center',
-  },
-  historyText: {
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-    fontFamily : plane
-  },
-  frameButton: {
-    backgroundColor: '#ddd',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  histFrame : {
-    flex:1,
-    width : width
+  radio : {
+    width : 10,
+    height : 10,
+    padding : 5,
   }
-
 });

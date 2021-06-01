@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   SafeAreaView,
@@ -8,11 +8,15 @@ import {
   TextInput,
   Button,
   ScrollView,
+  Dimensions
 } from 'react-native';
 import DeprecatedEdgeInsetsPropType from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedEdgeInsetsPropType';
 import url from '../../url';
 import {bold , plane} from '../../font'
 
+import RankInfo from './RankInfo'
+
+const {width, height} = Dimensions.get('window')
 
 const Rank = ({navigation}) => {
   const [data, setData] = useState(['1', '2', '3', '4']);
@@ -37,8 +41,6 @@ const Rank = ({navigation}) => {
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json[0]);
-
         setMyid(json[0].id);
         setUname(json[0].name);
         setNname(json[0].nickname);
@@ -56,36 +58,10 @@ const Rank = ({navigation}) => {
     })
       .then(res => res.json())
       .then(json => {
-        console.log(json);
         setData(json);
       });
   };
 
-  /*
-const findmyrank = data.map((d, idx) => {
-  console.log(d.id);
-  if(d.id == myid){
-    setMyrank(d.rank)
-    //break;
-  }
-    return d.rank;
-});
-*/
-
-  /*
-    const findmyrank = () => {
-      console.log("로그확인")
-      console.log(data.length)
-      for(let i = 0; i < data.length; i++){
-        console.log(i)
-        console.log(data)
-        if(data[i].id == myid){
-          setMyrank(data[i].rank)
-          console.log(data[i].rank)
-          break;
-        }
-      }
-    }*/
 
   if (!isLoad) {
     road();
@@ -104,50 +80,38 @@ const findmyrank = data.map((d, idx) => {
       //return d.rank;
     });
   }
+  useEffect(()=>{
+    road();
+  }, [])
 
-  //const amountList = amount.map((amountM, index) => ({amountM}))
-  const dataList = data.map(d => 
-    (
-    <View key={d.nickname} style={styles.rankbox}>
-      <Text style={styles.ranknum}> ▪ {d.rank} 위 ▪ </Text>
-      <Text>
-        {' '} 전력량 :
-        <Text style={styles.ranklist}>
-          {' '} 
-          {'\t\t\t'} {d.amount}{' '} 
-        </Text>
-      </Text>
-      <Text>
-        {' '} 닉네임 :
-        <Text style={styles.ranklist}>
-          {' '}
-          {'\t\t\t'} {d.nickname}{' '}
-        </Text>
-      </Text>
-      <Text>
-        {' '} 메세지 :
-        <Text style={styles.ranklist}>
-          {' '}
-          {'\t\t\t'} {d.message}{' '}
-        </Text>
-      </Text>
-    </View>
-    )
-  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.appTitle}>   랭킹 </Text>
+      <Text style={styles.appTitle}>순위</Text>
 
       <View style={styles.myFrame}>
-        <Text style={styles.myranktitle}> 내 순위 </Text>
+        <Text style={styles.myranktitle}> {nname} </Text>
         <Text style={styles.uname}>
-          {' '} {nname} :<Text style={styles.urank}> {myrank} 위</Text>
+          <Text style={styles.urank}> ▪ {myrank} 위 ▪ </Text>
         </Text>
       </View>
 
       <View style={styles.frame}>
-        <ScrollView>{dataList}</ScrollView>
+      <View style={styles.titlerow}>
+        <Text style={styles.myranktitle}> 
+         순위 {'\t\t\t'} 
+         에너지 {'\t\t\t\t'} 
+         닉네임 {'\t\t\t\t\t'} 
+         메시지</Text>
+
+      </View>
+        <ScrollView>
+          {
+            data.map((d, index) => (
+              <RankInfo d={d} key={index} />
+             ))
+          }
+        </ScrollView>
       </View>
     </View>
   );
@@ -156,13 +120,24 @@ const findmyrank = data.map((d, idx) => {
 export default Rank;
 
 const styles = StyleSheet.create({
+  titlerow: {
+    flexDirection:'row',
+    justifyContent: 'space-between',
+    paddingLeft: 25,
+    paddingRight: 25,
+  },
+  amountlist: {
+    width: 40,
+  },
+  namelist:{
+    width: 80,
+  },
   container: {
     backgroundColor: 'rgb(64,183,173)',
     flex: 1,
     //alignItems : 'center',
     //flexDirection : 'column'
   },
-
   //타이틀
   appTitle: {
     color: 'black',
@@ -178,12 +153,11 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 5, //각
     borderTopRightRadius: 5, //각
-    marginLeft: 15,
-    marginRight: 15,
+    marginHorizontal : 5,
     flexDirection : 'column',
 
     maxHeight: 100,
-    padding: 15,
+
     justifyContent: 'center',
     
   },
@@ -192,8 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
-    marginLeft: 15,
-    marginRight: 15,
+    marginHorizontal : 5,
     marginBottom: 15,
 
     padding: 15,
@@ -206,30 +179,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily : plane
   },
-  rankbox: {
-    backgroundColor : 'white',
-    borderTopLeftRadius: 5, //각
-    borderTopRightRadius: 5, //각
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-    flex: 1,
-    borderColor: '#bbb',
-    borderWidth: 1,
-    margin: 10,
-    padding: 10,
-    fontFamily : plane
-  },
-  ranknum: {
-    padding: 0,
-    textAlign: 'center',
-    fontSize: 15,
-    borderBottomColor: '#ddd',
-    borderBottomWidth: 1,
-    //textAlign: 'center',
-    //justifyContent : 'center'
-    fontFamily : plane
-  },
-
   uname: {
     padding: 10,
     borderBottomColor: '#bbb',
@@ -243,4 +192,5 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontFamily : plane
   },
+
 });
