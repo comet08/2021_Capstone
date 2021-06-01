@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import DeprecatedEdgeInsetsPropType from 'react-native/Libraries/DeprecatedPropTypes/DeprecatedEdgeInsetsPropType';
 import url from '../../url';
+import {bold , plane} from '../../font'
+
 
 const Rank = ({navigation}) => {
   const [data, setData] = useState(['1', '2', '3', '4']);
@@ -104,14 +106,15 @@ const findmyrank = data.map((d, idx) => {
   }
 
   //const amountList = amount.map((amountM, index) => ({amountM}))
-  const dataList = data.map(d => (
-    <View key={d.rank} style={styles.rankbox}>
+  const dataList = data.map(d => 
+    (
+    <View key={d.nickname} style={styles.rankbox}>
       <Text style={styles.ranknum}> ▪ {d.rank} 위 ▪ </Text>
       <Text>
         {' '} 전력량 :
         <Text style={styles.ranklist}>
-          {' '}
-          {'\t\t\t'} {d.amount}{' '}
+          {' '} 
+          {'\t\t\t'} {d.amount}{' '} 
         </Text>
       </Text>
       <Text>
@@ -129,11 +132,12 @@ const findmyrank = data.map((d, idx) => {
         </Text>
       </Text>
     </View>
-  ));
+    )
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.appTitle}>순위</Text>
+      <Text style={styles.appTitle}>   랭킹 </Text>
 
       <View style={styles.myFrame}>
         <Text style={styles.myranktitle}> 내 순위 </Text>
@@ -153,7 +157,7 @@ export default Rank;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'green',
+    backgroundColor: 'rgb(64,183,173)',
     flex: 1,
     //alignItems : 'center',
     //flexDirection : 'column'
@@ -164,13 +168,10 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 36,
     marginTop: 20,
-    marginBottom: 20,
-    paddingBottom: 30,
+    marginVertical : 20,
     fontWeight: '300',
     textAlign: 'center',
-    //backgroundColor: '#fff',
-    borderBottomColor: 'black',
-    borderBottomWidth: 4,
+    fontFamily : bold
   },
   myFrame: {
     backgroundColor: '#ddd',
@@ -179,10 +180,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5, //각
     marginLeft: 15,
     marginRight: 15,
+    flexDirection : 'column',
 
     maxHeight: 100,
     padding: 15,
     justifyContent: 'center',
+    
   },
   frame: {
     backgroundColor: '#eee',
@@ -195,13 +198,16 @@ const styles = StyleSheet.create({
 
     padding: 15,
     justifyContent: 'center',
+    
   },
 
   myranktitle: {
     color: 'gray',
     textAlign: 'center',
+    fontFamily : plane
   },
   rankbox: {
+    backgroundColor : 'white',
     borderTopLeftRadius: 5, //각
     borderTopRightRadius: 5, //각
     borderBottomLeftRadius: 5,
@@ -211,6 +217,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: 10,
     padding: 10,
+    fontFamily : plane
   },
   ranknum: {
     padding: 0,
@@ -220,17 +227,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     //textAlign: 'center',
     //justifyContent : 'center'
+    fontFamily : plane
   },
 
   uname: {
     padding: 10,
     borderBottomColor: '#bbb',
     textAlign: 'center',
+    fontFamily : plane
   },
   urank: {
     padding: 10,
     borderBottomColor: '#bbb',
     textAlign: 'center',
     fontSize: 35,
+    fontFamily : plane
   },
 });

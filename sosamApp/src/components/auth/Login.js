@@ -9,6 +9,7 @@ import {
   Alert,
   Dimensions,
   TouchableOpacity,
+  Image
 } from 'react-native';
 
 import axios from 'axios';
@@ -19,6 +20,7 @@ import checkLogin from '../../redux/actions';
 import {ScrollView, TapGestureHandler} from 'react-native-gesture-handler';
 
 import url from '../../url';
+import {bold , plane} from '../../font'
 
 const {width, height} = Dimensions.get('window');
 
@@ -83,7 +85,7 @@ const Login = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <Text style={{marginTop: 250}}> 뭔가 간지나는 이미지 </Text>
+      <Image style = {styles.logo} source={require('../../logo.png')}></Image>
       <ScrollView>
         <View style={styles.inputContainer}>
           <Text></Text>
@@ -138,6 +140,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
   },
+  logo : {
+    height : 200,
+    width : 200,
+    marginTop : 75,
+  },
   login: {
     backgroundColor: 'black',
     flexDirection: 'row',
@@ -151,7 +158,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: 'white',
     fontSize: 20,
-    fontFamily: 'nanumbarungothicbold',
+    fontFamily: bold,
   },
   input: {
     borderBottomColor: 'grey',
@@ -176,7 +183,7 @@ const styles = StyleSheet.create({
   regText: {
     color: 'black',
     fontSize: 20,
-    fontFamily: 'nanumbarungothicbold',
+    fontFamily: bold,
   },
   checkContainer: {
     width: width,
@@ -204,7 +211,7 @@ const styles = StyleSheet.create({
   },
   checkText: {
     color: 'black',
-    fontFamily: 'nanumbarungothic',
+    fontFamily: plane,
     fontSize: 17,
   },
 });

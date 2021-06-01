@@ -32,8 +32,8 @@ const Discount = ({navigation}) => {
   const checkEnergy = () => {
     if (energy < sendEnergy) {
       Alert.alert('가지고 있는 전력량보다 할인받을 전력량이 많습니다.');
-    } 
-    else 
+    }
+    else
       sendBody();
   };
 
@@ -52,8 +52,8 @@ const Discount = ({navigation}) => {
       .then(res => {
         if (res.data != false) {
           Alert.alert('할인이 완료되었습니다.');
-        } 
-        else 
+        }
+        else
           Alert.alert('실패하였습니다. 다시 시도해주세요.');
       })
       .catch(err => {
@@ -81,6 +81,7 @@ const Discount = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>할인받기</Text>
+      <View style={styles.body}>
       <Text style={styles.normalText}>내 전력량 : {energy}</Text>
       <TextInput
         style={styles.input}
@@ -90,12 +91,15 @@ const Discount = ({navigation}) => {
         }}
       />
       <Text style={styles.normalText}>나의 집 주소</Text>
-      <Text style={styles.normalText}>{address}</Text>
+      <Text style={styles.home}>{address}</Text>
+      </View>
+      <View style={styles.center}>
       <TouchableOpacity
         style={styles.donateButton}
         onPress={() => checkEnergy()}>
         <Text style={styles.donateText}>할인받기</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -106,23 +110,45 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
-    alignItems: 'center',
     flexDirection: 'column',
+  },
+  center: {
+    alignItems: 'center',
+  },
+  body: {
+    marginLeft : 10,
+    marginRight : 10,
   },
   titleText: {
     marginTop: 50,
+    marginBottom: 30,
     fontSize: 50,
+    textAlign: 'center',
   },
   normalText: {
-    marginTop: 30,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 2,
     fontSize: 30,
+    marginTop: 40,
   },
   input: {
-    marginTop: 20,
-    fontSize: 30,
+    marginTop: 30,
+    fontSize: 25,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 2,
+  },
+  home: {
+    marginTop : 10,
+    fontSize: 25,
+  },
+  place: {
+    height: 50,
+    width: 300,
+    marginTop: 30,
+    fontSize: 25,
   },
   donateButton: {
-    backgroundColor: 'rgb(7, 101, 38)',
+    backgroundColor: 'rgb(64, 183, 173)',
     height: 64,
     width: 128,
     justifyContent: 'center',
@@ -133,5 +159,6 @@ const styles = StyleSheet.create({
   },
   donateText: {
     fontSize: 30,
+    fontFamily: 'nanumbarungothicbold',
   },
 });

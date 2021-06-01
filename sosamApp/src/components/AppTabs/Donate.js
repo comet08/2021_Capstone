@@ -13,6 +13,7 @@ import url from '../../url';
 import axios from 'axios';
 import {useSelector, shallowEqual} from 'react-redux';
 import {Picker} from '@react-native-picker/picker';
+import {bold , plane} from '../../font'
 
 const Donate = ({navigation}) => {
   const [open, setOpen] = useState(false);
@@ -74,7 +75,7 @@ const Donate = ({navigation}) => {
         setPi(
           res.data.map((item, index) => {
             return (
-              <Picker.Item key={index} label={item.place} value={item.place} />
+              <Picker.Item key={index} label={item.place} value={item.place} style={styles.pickerItem}/>
             );
           }),
         );
@@ -104,17 +105,18 @@ const Donate = ({navigation}) => {
 
       <Picker
         selectedValue={sendPlace}
-        style={{height: 50, width: 200}}
+        style={styles.picker}
         placeholder="기부 장소"
         onValueChange={(itemValue, itemIndex) => setSendPlace(itemValue)}>
         {pi}
       </Picker>
-
+      <View style={styles.center}>
       <TouchableOpacity
         style={styles.donateButton}
         onPress={() => checkEnergy()}>
         <Text style={styles.donateText}>기부하기</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -125,32 +127,59 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
-    alignItems: 'center',
     flexDirection: 'column',
+  },
+  center: {
+    alignItems: 'center',
+  },
+  body: {
+    marginLeft : 10,
+    marginRight : 10,
   },
   titleText: {
     marginTop: 50,
+    marginBottom: 30,
     fontSize: 50,
+    textAlign: 'center',
+    fontFamily : bold
   },
   normalText: {
-    marginTop: 50,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 2,
     fontSize: 30,
+    marginTop: 40,
+    fontFamily : plane
   },
   input: {
-    marginTop: 20,
-    fontSize: 30,
+    marginTop: 30,
+    fontSize: 25,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 2,
+    fontFamily : plane
+  },
+  home: {
+    marginTop : 10,
+    fontSize: 25,
+  },
+  place: {
+    height: 50,
+    width: 300,
+    marginTop: 30,
+    fontSize: 25,
   },
   donateButton: {
-    backgroundColor: 'rgb(7, 101, 38)',
+    backgroundColor: 'rgb(64, 183, 173)',
     height: 64,
     width: 128,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 20,
     marginRight: 20,
-    marginTop: 30,
+    marginTop: 50,
+    
   },
   donateText: {
     fontSize: 30,
+    fontFamily: plane,
   },
 });
