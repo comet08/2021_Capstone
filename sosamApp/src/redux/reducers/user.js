@@ -1,9 +1,10 @@
 const CHECK_LOGIN = 'CHECK_LOGIN';
-
+const CHECK_ENERGY = 'CHECK_ENERGY';
 
 const initialState = {
     loggedIn : false,
-    uid : ''
+    uid : '',
+    energy : 0
 };
 
 const user = (state = initialState, action ) => {
@@ -11,8 +12,14 @@ const user = (state = initialState, action ) => {
         return {
             ...state,
             loggedIn : action.loggedIn,
-            uid : action.uid
+            uid : action.uid,
         }
+    if(action.type == CHECK_ENERGY){
+        return{
+            ...state,
+            energy : action.energy
+        }
+    }
     else
         return state;
 }

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import url from '../../url';
+import { bold, plane } from '../../font';
 
 const {width, height} = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const Register = ({navigation}) => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
+  const [birth, setBirth] = useState('');
   const [nick, setNick] = useState('');
   const [errmessage, setErr] = useState('');
   const [checkPoint, setCheckPoint] = useState(false);
@@ -100,7 +101,7 @@ const Register = ({navigation}) => {
       setErr('번호를 입력해주세요.');
       return false;
     }
-    if (age == '') {
+    if (birth == '') {
       setErr('나이를 입력해주세요.');
       return false;
     }
@@ -124,7 +125,7 @@ const Register = ({navigation}) => {
       name: name,
       address: address,
       phone: phone,
-      age: age,
+      birth: birth,
       nickname: nick,
       message: '',
     };
@@ -215,7 +216,7 @@ const Register = ({navigation}) => {
           <TextInput
             style={styles.input}
             placeholder="생년월일(2000-01-01)"
-            onChangeText={n => setAge(n)}
+            onChangeText={n => setBirth(n)}
           />
 
           <View style={styles.checkContainer}>
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
   },
   head: {
-    fontFamily: 'nanumbarungothicbold',
+    fontFamily: bold,
     fontSize: 30,
     paddingVertical: 20,
     textAlign: 'center',
@@ -264,30 +265,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonContainer: {
-    backgroundColor: 'rgb(7, 101, 38)',
+    backgroundColor: 'rgb(64,183,173)',
     color: 'black',
     height: width / 8,
     justifyContent: 'center',
     fontSize: 20,
     marginVertical: width / 30,
+    borderRadius : 10
   },
   regButton: {
     fontSize: 25,
-    fontFamily: 'nanumbarungothic',
-    color: 'white',
+    fontFamily: bold,
+    color: 'black',
     textAlign: 'center',
   },
   idButton: {
     width: width / 4,
     marginBottom: width / 60,
-    backgroundColor: 'rgb(7, 101, 38)',
+    backgroundColor: 'rgb(64,183,173)',
     height: width / 9,
     justifyContent: 'center',
+    borderRadius : 7
   },
   idButtonText: {
     fontSize: 17,
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
+    fontFamily : bold
   },
   inputContainer: {
     width: width - width / 30,
@@ -304,7 +308,7 @@ const styles = StyleSheet.create({
   errmessage: {
     textAlign: 'center',
     color: 'red',
-    fontFamily: 'nanumbarungothic',
+    fontFamily: plane,
     fontSize: 15,
   },
   checkContainer: {
@@ -331,7 +335,7 @@ const styles = StyleSheet.create({
   },
   checkText: {
     color: 'black',
-    fontFamily: 'nanumbarungothic',
+    fontFamily: plane,
     fontSize: width / 28,
   },
 });

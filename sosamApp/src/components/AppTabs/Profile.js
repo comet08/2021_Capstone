@@ -13,18 +13,20 @@ import {
 } from 'react-native';
 
 import axios from 'axios';
-//import AsyncStorage  from "@react-native-async-storage/async-storage"
+import AsyncStorage  from "@react-native-async-storage/async-storage"
 
 import {useDispatch} from 'react-redux';
 import checkLogin from '../../redux/actions';
 import url from '../../url';
+import {bold , plane} from '../../font'
+
 
 const Profile = ({navigation, setLoggedIn}) => {
   const dispatch = useDispatch();
   const onLogout = async () => {
     //asyncstorage에서 지우기
     await axios
-      .get(`http://${url}/logout`)
+      .get(`http://${url}/logout`) 
       .then(res => {
         if (res.data) {
           AsyncStorage.setItem('loggedIn', JSON.stringify(false));
@@ -52,7 +54,7 @@ const Profile = ({navigation, setLoggedIn}) => {
   const [message, setMessage] = useState('메시지 표시');
   const [ph, setPh] = useState('번호 표시');
   const [addr, setAddr] = useState('주소 표시');
-  const [age, setAge] = useState('연령 표시');
+  const [age, setAge] = useState('생일 표시');
   const [status, setstatus] = useState(true);
   const [isLoad, setisLoad] = useState(false);
 
@@ -80,10 +82,10 @@ const Profile = ({navigation, setLoggedIn}) => {
 
         setUname(json[0].name);
         setNname(json[0].nickname);
-        setMessage(json[0].message);
+        setMessage(json[0].message); 
         setPh(json[0].phone);
         setAddr(json[0].address);
-        setAge(json[0].age);
+        setAge(json[0].birth);
       });
   };
 
@@ -93,7 +95,7 @@ const Profile = ({navigation, setLoggedIn}) => {
       name: utext,
       address: adtext,
       phone: ptext,
-      age: agtext,
+      birth: agtext,
       message: mtext,
       nickname: ntext,
     };
@@ -109,6 +111,8 @@ const Profile = ({navigation, setLoggedIn}) => {
       .then(json => {
         console.log(json[0]);
       });
+
+      road();
   };
 
   const buttonPress = () => {
@@ -120,6 +124,7 @@ const Profile = ({navigation, setLoggedIn}) => {
     setPtext(ph);
     setAdtext(addr);
     setAgtext(age);
+
     setstatus(!status);
     //thisStatus = !thisStatus
   };
@@ -145,6 +150,7 @@ const Profile = ({navigation, setLoggedIn}) => {
       <Text style={styles.appTitle}>사용자 설정</Text>
 
       {status ? (
+        <>
         <View style={styles.frame}>
           <Text style={styles.label}>
             {' '}
@@ -178,13 +184,22 @@ const Profile = ({navigation, setLoggedIn}) => {
 
           <Text style={styles.label}>
             {' '}
-            연령 {'\t\t\t\t'}
+            생일 {'\t\t\t\t'}
             <Text style={styles.info}> {age} </Text>
           </Text>
         </View>
+        <View style={styles.changeButton}>
+          <Button style={{fontFamily : plane}}title={'정보 수정'} color="rgb(20,100,100)" onPress={buttonPress} />
+        </View>
+        <TouchableOpacity style={styles.logoutContainer} onPress={onLogout}>
+        <Text style={styles.logout}>Logout</Text>
+      </TouchableOpacity>
+        </>
+        
       ) : (
+        <ScrollView>
         <View style={styles.frame}>
-          <ScrollView>
+          
             <View style={styles.row}>
               <View style={styles.inputWrap}>
                 <Text style={styles.label}> 이름 </Text>
@@ -192,7 +207,7 @@ const Profile = ({navigation, setLoggedIn}) => {
                 <Text style={styles.label}> 메시지 </Text>
                 <Text style={styles.label}> 휴대폰 번호 </Text>
                 <Text style={styles.label}> 주소 </Text>
-                <Text style={styles.label}> 연령</Text>
+                <Text style={styles.label}> 생일</Text>
               </View>
 
               <View style={styles.inputWrap}>
@@ -222,7 +237,7 @@ const Profile = ({navigation, setLoggedIn}) => {
                 <TextInput
                   style={styles.input}
                   placeholder="번호 입력"
-                  nChangeText={ptext => setPtext(ptext)}
+                  onChangeText={ptext => setPtext(ptext)}
                   value={ptext}
                   returnKeyType="next"
                 />
@@ -235,33 +250,25 @@ const Profile = ({navigation, setLoggedIn}) => {
                 />
                 <TextInput
                   style={styles.input}
-                  type="number"
-                  placeholder="연령 입력"
+                  placeholder="생일 입력"
                   onChangeText={agtext => setAgtext(agtext)}
-                  value={agtext}
+                  value={String(agtext)} 
                   keyboardType="numeric"
                   returnKeyType="next"
                 />
               </View>
             </View>
-          </ScrollView>
         </View>
-      )}
-
-      <View style={styles.changeButton}>
-        {status ? 
-        (
-          <Button title={'정보 수정'} color="gray" onPress={buttonPress} />
-        ) : 
-        (
+        <View style={styles.changeButton}>
+          <Button title={'취소'} color="black" onPress={()=>{setstatus(!status)}} />
+          <Text></Text>
           <Button title={'수정 완료'} color="black" onPress={changePress} />
-        )}
-      </View>
-
-      <TouchableOpacity style={styles.logoutContainer} onPress={onLogout}>
-        <Text style={styles.logout}>Logout</Text>
-      </TouchableOpacity>
+        </View>
+        </ScrollView>
+      )}
+      
     </View>
+    
   );
 };
 
@@ -269,19 +276,17 @@ export default Profile;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'green',
-    flex: 1,
-    paddingBottom: 70,
-    //alignItems : 'center',
-    //flexDirection : 'column',
-    //justifyContent : 'center'
+    backgroundColor: 'rgb(64,183,173)',   
+    flex:1,
   },
   logoutContainer: {
     marginLeft: 20,
     marginRight: 20,
     padding: 5,
-    backgroundColor: 'white',
+    marginTop : 20,
+    backgroundColor: 'black',
     justifyContent: 'center',
+    color : 'white',
     borderTopLeftRadius: 2,
     borderTopRightRadius: 2,
     borderBottomLeftRadius: 2,
@@ -289,7 +294,9 @@ const styles = StyleSheet.create({
   },
   logout: {
     textAlign: 'center',
+    color  : 'white',
     fontSize: 20,
+    fontFamily : plane
   },
 
   //사용자 설정 타이틀
@@ -301,15 +308,13 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     fontWeight: '300',
     textAlign: 'center',
-    //backgroundColor: '#fff',
-    borderBottomColor: 'black',
-    borderBottomWidth: 4,
+
+    fontFamily : bold
   },
   //설정 내용 틀
   frame: {
-    backgroundColor: '#eee',
-    //width: 100,
-    flex: 1,
+    backgroundColor: 'white',
+
     borderTopLeftRadius: 5, //각
     borderTopRightRadius: 5, //각
     borderBottomLeftRadius: 5,
@@ -322,7 +327,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   row: {
-    flex: 1,
     flexDirection: 'row',
   },
   inputWrap: {
@@ -330,8 +334,9 @@ const styles = StyleSheet.create({
     //marginLeft: 30,
     borderColor: '#cccccc',
     //borderBottomWidth: 1,
-    marginBottom: 150,
+    marginBottom: 10,
     //marginBottom: -15
+    
   },
 
   label: {
@@ -340,7 +345,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
-
+    fontFamily : plane
     //fontSize: 24,
     //marginLeft: 10,
     //marginBottom: -12,
@@ -360,6 +365,7 @@ const styles = StyleSheet.create({
     //borderBottomWidth: 1,
     //fontSize: 24,
     //marginBottom: -12,
+    fontFamily : plane
   },
 
   input: {
@@ -371,10 +377,12 @@ const styles = StyleSheet.create({
     //flex: 1,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
+    fontFamily : plane
   },
 
   changeButton: {
     margin: 20,
+    fontFamily : plane
     //marginLeft: 15,
     //marginRight: 15,
   },
