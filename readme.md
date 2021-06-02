@@ -5,10 +5,11 @@
 
 
 
+<p align="center">
+  
+![cyclenergy (1)](https://user-images.githubusercontent.com/37640219/120482533-3000f780-c3ec-11eb-9e62-7b6d69d18d46.png)
 
-![cyclenergy (1)](https://user-images.githubusercontent.com/37640219/120482533-3000f780-c3ec-11eb-9e62-7b6d69d18d46.png) {:.aligncenter}
-
-
+</p>
 
 # 🚲[CYCLE ENERGY]🚲
 
