@@ -50,12 +50,14 @@ T16. 박성혜, 이안나, 정다운
 
 
 ## 목표
-<p align="center">
+
+
   
 | <b>주민참여</b> | <b>목표의식</b> | <b>환경보호</b> |
 |---|---|---|
 | ![주민참여](https://user-images.githubusercontent.com/37640219/120490363-4f4f5300-c3f3-11eb-8c83-20a3cf3eebf4.png) | ![목표의식](https://user-images.githubusercontent.com/37640219/120490420-5bd3ab80-c3f3-11eb-86be-c299dba60ca9.png) | ![환경보호](https://user-images.githubusercontent.com/37640219/120490474-655d1380-c3f3-11eb-9012-38cb0b1fdf55.png)
 | <br/> <p align="center"> 운동시설을 이용해 주민들이 <br/> 신재생 에너지와 환경의 <br/> 중요성을 깨닫게 함 </p>| <br/> <p align="center"> 운동의 성취감을 느끼도록 <br/> 순위 시스템을 도입하여 지속적인 <br/> 이용을 위한 목표의식을 제공함 </p> | <br/> <p align="center"> 에너지를 생산하며 배출되는 <br/> 탄소 양이 적기 때문에 환경을 <br/> 보호할 수 있음 </p>
+
 
 
 <br/>
@@ -66,6 +68,14 @@ T16. 박성혜, 이안나, 정다운
 
 
 ![하드와서버](https://user-images.githubusercontent.com/37640219/120500095-8cb7de80-c3fb-11eb-951b-861fe114f8e3.png)
+
+ - 적용 기술
+
+    - AWS RDS cloude
+
+    - React.js, axios, sql, redux, javascript, stylesheet
+
+    - arduino & raspberry pi serial communication, bluetooth communication, current sensor, LCD display
 
 
 <br/>
