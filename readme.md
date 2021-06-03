@@ -71,9 +71,9 @@ T16. 박성혜, 이안나, 정다운
 
  - 적용 기술
 
-    - AWS RDS cloude
+    - AWS EC2, node.js, mysql
 
-    - React.js, axios, sql, redux, javascript, stylesheet
+    - React-native, axios, sql, redux, javascript, stylesheet, hooks
 
     - arduino & raspberry pi serial communication, bluetooth communication, current sensor, LCD display
 
