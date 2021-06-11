@@ -40,10 +40,13 @@ const Home = ({navigation}) => {
   const [runText, setRunText] = useState('운동시작');
   const [isEnabled, setIsEnabled] = useState('false');
   const [hist, setHist] = useState([]);
+  const [startTime, setStartTime] = useState(0);
+
   const userstate = useSelector(state => state.user);
   const dispatch = useDispatch();
 
-  const histList = (type) => {
+  const histList = async (type) => {
+
     if (type === "history") {
         setHist(
           <ExerLog data={exerLog} />
@@ -58,6 +61,7 @@ const Home = ({navigation}) => {
         )
     }
   }
+  
 
   
 
@@ -65,7 +69,6 @@ const Home = ({navigation}) => {
     await axios
       .get(`http://${url}/logdis`)
       .then(res => {
-        console.log(res.data);
         setDiscountLog(res.data);
       })  
       .catch(err => {
@@ -75,7 +78,6 @@ const Home = ({navigation}) => {
       await axios
       .get(`http://${url}/logdona`)
       .then(res => {
-        console.log(res.data);
         setDonateLog(res.data);
       })  
       .catch(err => {
@@ -85,13 +87,28 @@ const Home = ({navigation}) => {
       await axios
       .get(`http://${url}/logele`)
       .then(res => {
-        console.log(res.data);
         setExerLog(res.data);
       })  
       .catch(err => {
         console.log('로그  에러');
       });
   };
+
+  
+  const getTime = () =>{
+    let today = new Date();
+    let t = '';
+    if(today.getHours() < 10)
+      t += '0';
+    t += today.getHours() + ':';
+    if(today.getMinutes() < 10)
+      t+= '0';
+    t +=today.getMinutes()+ ':';
+    if(today.getSeconds()<10)
+      t+='0';
+    t += today.getSeconds();
+    return t;
+  }
 
   const connect = device => {
     setRunText('연결중...');
@@ -100,6 +117,7 @@ const Home = ({navigation}) => {
         console.log('연결됨');
         BluetoothSerial.write('s')
           .then(res => { 
+            setStartTime(getTime());
             setRunText('운동종료');
             console.log('운동시작됨');
           })
@@ -108,39 +126,56 @@ const Home = ({navigation}) => {
       .catch(err => Alert.alert('장치와 연결 실패'));
   }; 
 
-  const onRun = () => {
+  const getMessage = () =>{
+    let st = "end/";
+    st+=userstate.uid + '/' + startTime + '/' + getTime()+'/';
+    console.log(st);
+    return st;
+  } 
+  const onRun = async () => {
     if (runText == '운동시작') {
-      BluetoothSerial.requestEnable()
-        .then(res => setIsEnabled(true))
-        .catch(err => Alert.alert('블루투스를 켜주세요'));
- 
-      if (isEnabled == true) {
-        connect('98:D3:61:F9:90:8C');
-      }
-    } else {
-      BluetoothSerial.write('e');
-      BluetoothSerial.disconnect()
-        .then(res => {
-          setIsEnabled(false);
-          setRunText('운동시작');
-        })
-        .catch(err => console.log('블루투스 끄기 실패'));
-      getLog();
-    }
-  }; 
 
+    
+      BluetoothSerial.requestEnable()
+        .then(res => 
+        {
+          setIsEnabled(true);
+          connect('98:D3:61:F9:90:8C');
+
+        })
+        .catch(err => Alert.alert('블루투스를 켜주세요'));
+    } 
+    else {
+        await BluetoothSerial.write(getMessage());
+        await BluetoothSerial.disable()
+          .then(res => {
+            setIsEnabled(false);
+            setStartTime('');
+            setRunText('운동시작');
+          })
+          .catch(err => console.log('블루투스 끄기 실패'));
+       
+      }
+      setTimeout(()=>{
+        dispatch(checkEnergy());
+        getLog(); 
+      },3000);     
+  }; 
+ 
   useEffect(() => {
     dispatch(checkEnergy());
     getLog(); 
-    console.log(donateLog);
     histList();
   }, []);
+
+    
+  
 
   return (
     <View style={styles.container}>
       <View style={styles.head}>
         <Image style={styles.logo} source={require('../../logo.png')} />
-        <Text style={styles.myEnergy}> 내 에너지 : {userstate.energy} mA </Text>
+        <Text style={styles.myEnergy}> 내 에너지 : {Math.floor(userstate.energy)} mA </Text>
       </View>
       <TouchableOpacity style={styles.runButton} onPress={onRun}>
           <Text style={styles.runText}>{runText}</Text>
@@ -190,15 +225,15 @@ const styles = StyleSheet.create({
     
   },
   logo : {
-    width : 100,
-    height : 100,
+    width : width/4,
+    height :  width/4,
     alignItems : 'center',
     marginVertical : 20,
     
   },
   myEnergy: {
-    fontSize: 27,
-    fontFamily : plane,
+    fontSize: width/14,
+    fontFamily : bold,
     backgroundColor : 'white',
     borderColor : 'black',
     paddingVertical : 10,
@@ -225,37 +260,14 @@ const styles = StyleSheet.create({
   },
   runText: {
     color: 'black',
-    fontSize: 40,
+    fontSize: width/8,
     fontFamily : bold,
     textAlign :'center'
   },
   bottom: {
     flexDirection: 'row',
   },
-  discountButton: {
-    backgroundColor: '#009688',
-    height: 64,
-    width: 128,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  discountText: {
-    fontSize: 30,
-  },
-  donateButton: {
-    backgroundColor: '#009688',
-    height: 64,
-    width: 128,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  donateText: {
-    fontSize: 30,
-  },
+
   
   row: {
     flexDirection:'row',
