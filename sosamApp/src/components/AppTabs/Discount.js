@@ -15,6 +15,7 @@ import url from '../../url';
 import axios from 'axios';
 import {useSelector, shallowEqual, useDispatch} from 'react-redux';
 import { bold, plane } from '../../font';
+import { checkEnergy } from '../../redux/actions';
 
 const {width, height} = Dimensions.get('window')
 
@@ -33,11 +34,26 @@ const Discount = ({navigation}) => {
       sendBody();
   };
 
+  
+  const getTime = (today) =>{
+    let t = '';
+    if(today.getHours() < 10)
+      t += '0';
+    t += today.getHours();
+    if(today.getMinutes() < 10)
+      t+= '0';
+    t +=today.getMinutes();
+    if(today.getSeconds()<10)
+      t+='0';
+    t += today.getSeconds();
+    return t;
+  }
+
   const sendBody = () => {
     let today = new Date();
     let body = {
       date: today.toISOString().split('T')[0],
-      time: today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds(),
+      time: getTime(today),
       energy: sendEnergy,
       address: address,
     };
@@ -47,6 +63,9 @@ const Discount = ({navigation}) => {
       .then(res => {
         if (res.data != false) {
           Alert.alert('할인이 완료되었습니다.');
+          dispatch(checkEnergy());
+          setSendEnergy(0);
+
         }
         else
           Alert.alert('실패하였습니다. 다시 시도해주세요.');
@@ -55,7 +74,7 @@ const Discount = ({navigation}) => {
         Alert.alert('할인 실패');
       });
 
-      dispatch(checkEnergy());
+     
   };
 
   const getAddress = () => {
@@ -81,11 +100,11 @@ const Discount = ({navigation}) => {
       <Text style={styles.titleText}>할인받기</Text>
       <View style={styles.body}>
 
-      <Text style={styles.normalText}>내 전력량 : {userstate.energy}</Text>
+      <Text style={styles.normalText}>내 전력량 {Math.floor(userstate.energy)}</Text>
       <TextInput
         style={styles.input}
         placeholder="할인받을 전력량"
-        keyboardType="numeric"
+        keyboardType = "numeric"
         onChangeText={n => {
           setSendEnergy(n);
         }}
@@ -121,12 +140,13 @@ const styles = StyleSheet.create({
   body: {
     marginLeft : 10,
     marginRight : 10,
+    marginBottom: 20,
     //backgroundColor: '#ddd',
 
   },
   titleText: {
     color: 'black',
-    fontSize: 36,
+    fontSize: width/9,
     marginTop: 20,
     marginBottom: 20,
     paddingBottom: 30,
@@ -142,7 +162,7 @@ const styles = StyleSheet.create({
     */
   },
   normalText: {
-    fontSize: 22,
+    fontSize: width/15,
     marginTop: 40,
     fontFamily : plane,
 
@@ -160,7 +180,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 10,
-    fontSize: 20,
+    fontSize: width/17,
     borderBottomColor: 'grey',
     borderBottomWidth: 2,
     fontFamily : plane,

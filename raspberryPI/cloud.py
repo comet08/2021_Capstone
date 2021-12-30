@@ -1,4 +1,3 @@
-
 #-*- coding:utf-8 -*-
 
 from datetime import date
@@ -63,4 +62,3 @@ while True:
         r = r.replace('\n', '')
         #print(r[:len(r)-1])
         pushing(r)
-

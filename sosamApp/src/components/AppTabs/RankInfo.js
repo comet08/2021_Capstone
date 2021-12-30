@@ -15,7 +15,7 @@ const {width, height} = Dimensions.get('window')
     return (
        <View  key={d.rank} style={styles.rankbox}>        
          <Text style={styles.ranknum}> {d.rank} 위 </Text>
-        <Text style={styles.energy}> {d.amount} </Text>
+        <Text style={styles.energy}> {Math.floor(d.amount)} </Text>
         <Text style={styles.inner}>{d.nickname}</Text>   
         <Text style={styles.inner}>{d.message} </Text>
         </View>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
       ranknum: {
         padding: 0,
         textAlign: 'center',
-        fontSize: 15,
+        fontSize: width/23,
         fontWeight: 'bold',
         //borderBottomColor: '#ddd',
         //borderBottomWidth: 1,
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
       inner : {
         fontSize : 12,
         width : width/4,
-        textAlign : 'center'
+        textAlign : 'center',
+        fontSize :  width/27,
       }
 })

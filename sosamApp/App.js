@@ -31,34 +31,39 @@ import axios from 'axios';
 
 import {Provider, useDispatch, useSelector, shallowEqual} from 'react-redux';
 import {createStore} from 'redux';
-import checkLogin from './src/redux/actions';
+import {checkLogin} from './src/redux/actions';
 import store from './src/store';
 import url from './src/url';
+
 const Stack = createStackNavigator();
 
 const App = props => {
   const [init, setInit] = useState(false);
   const [checkStorage, setcheckStorage] = useState(false);
   const [uid, setUid] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
   const userstate = useSelector(state => state.user);
-
+ 
   const setStorage = async () => {
     let value = await AsyncStorage.getItem('loggedIn');
     value = JSON.parse(value);
 
     if (userstate.loggedIn) {
       return;
-    }
+    } 
     if (value) {
       await axios.get(`http://${url}/isLoggedIn`).then(res => {
-        if (res.data != null) {
+        if (res.data != '') {  
           setcheckStorage(true);
-          setUid(res.data);
-        } else AsyncStorage.setItem('loggedIn', JSON.stringify(false));
+          setUid(res.data); 
+        } else  
+        AsyncStorage.setItem('loggedIn', JSON.stringify(false));
+      })
+      .catch((err)=>{
+        console.log(err);
       });
     }
-  };
+  }; 
 
   const InitApp = async () => {
     await setStorage();
