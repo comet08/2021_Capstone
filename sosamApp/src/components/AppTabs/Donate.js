@@ -8,15 +8,18 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import url from '../../url';
 import axios from 'axios';
 import {useSelector, shallowEqual, useDispatch} from 'react-redux';
 import {Picker} from '@react-native-picker/picker';
 import {bold , plane} from '../../font'
+import { checkEnergy } from '../../redux/actions';
 
 const {width, height} = Dimensions.get('window')
+
 
 
 const Donate = ({navigation}) => {
@@ -40,11 +43,25 @@ const Donate = ({navigation}) => {
     }
   };
 
+  const getTime = (today) =>{
+    let t = '';
+    if(today.getHours() < 10)
+      t += '0';
+    t += today.getHours();
+    if(today.getMinutes() < 10)
+      t+= '0';
+    t +=today.getMinutes();
+    if(today.getSeconds()<10)
+      t+='0';
+    t += today.getSeconds();
+    return t;
+  }
+
   const sendBody = () => {
     let today = new Date();
     let body = { 
       date: today.toISOString().split('T')[0],
-      time: today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds(),
+      time: getTime(today),
       energy: sendEnergy,
       donateto: sendPlace,
     };
@@ -54,12 +71,14 @@ const Donate = ({navigation}) => {
       .then(res => {
         if (res.data != false) {
           Alert.alert('기부가 완료되었습니다.');
+          dispatch(checkEnergy());
+          setSendEnergy(0);
         }
       })
       .catch(err => {
         Alert.alert('기부 실패');
       });
-      dispatch(checkEnergy());
+      
   };  
 
   const refreshPlaces = () => {
@@ -87,18 +106,19 @@ const Donate = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      <ScrollView>
     <View style={styles.body}>
       <Text style={styles.titleText}>기부하기</Text>
-      <Text style={styles.normalText}>내 전력량 : {userstate.energy}</Text>
+      <Text  style={styles.normalText}>내 전력량 {Math.floor(userstate.energy)}</Text>
       <TextInput
         style={styles.input}
         placeholder="기부할 전력량"
-        keyboardType="numeric"
+        keyboardType = "numeric"
         onChangeText={n => {
           setSendEnergy(n);
         }}
       />
-      <Text style={styles.normalText}>기부할 곳을 선택해주세요.</Text>
+      <Text style={styles.longText}>기부할 곳을 선택해주세요.</Text>
       
 
       <View style={styles.picker}>
@@ -118,6 +138,7 @@ const Donate = ({navigation}) => {
         <Text style={styles.donateText}>기부하기</Text>
       </TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   );
 };
@@ -126,7 +147,7 @@ export default Donate;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgb(64,183,173)',
+    backgroundColor: 'white',
     flex: 1,
     flexDirection: 'column',
   },
@@ -138,20 +159,48 @@ const styles = StyleSheet.create({
     marginRight : 10,
   },
   titleText: {
-    marginTop: 50,
-    marginBottom: 30,
-    fontSize: 50,
+    color: 'black',
+    fontSize: width/10,
+    marginTop: 20,
+    marginBottom: 20,
+    paddingBottom: 30,
+    fontWeight: '300',
     textAlign: 'center',
-    fontFamily : bold
+    fontFamily : bold,
   },
   normalText: {
-    fontSize: 22,
+    fontSize: width/15,
     marginTop: 40,
-    fontFamily : plane
+    fontFamily : plane,
+    textAlign: 'center',
+    borderColor : '#fff',
+    paddingVertical : 10,
+    borderRadius : 5,
+    paddingHorizontal : 10,
+    borderLeftWidth: 2,
+    borderRightWidth:2,
+    margin: 10,
+    marginLeft: 100,
+    marginRight: 100,
+  },
+  longText : {
+    fontSize: width/17,
+    marginTop: 40,
+    fontFamily : plane,
+    textAlign: 'center',
+    borderColor : '#fff',
+    paddingVertical : 10,
+    borderRadius : 5,
+    paddingHorizontal : 10,
+    borderLeftWidth: 2,
+    borderRightWidth:2,
+    margin: 10,
+    marginLeft: 60,
+    marginRight: 60,
   },
   input: {
     marginTop: 10,
-    fontSize: 20,
+    fontSize: width/17,
     borderBottomColor: 'grey',
     borderBottomWidth: 2,
     fontFamily : plane,
@@ -160,6 +209,7 @@ const styles = StyleSheet.create({
     borderRadius : 10,
     elevation : 5,
     paddingVertical : 15,
+    textAlign: 'center',
   },
   home: {
     marginTop : 10,
@@ -180,7 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   donateButton: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgb(64,183,173)',
     height: 64,
     justifyContent: 'center',
     alignItems: 'center',
@@ -197,6 +247,7 @@ const styles = StyleSheet.create({
     fontFamily: bold,
   },
   pickerItem : {
+    textAlign: 'center',
   },
   picker:{
     marginTop : 10,
@@ -205,5 +256,6 @@ const styles = StyleSheet.create({
     alignContent : 'center',
     borderRadius : 10,
     elevation : 10,
+    
   }
 });

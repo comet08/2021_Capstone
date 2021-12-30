@@ -326,10 +326,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   checked: {
-    backgroundColor: 'black',
+    backgroundColor: 'white',
   },
   checkIcon: {
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     fontSize: 17,
   },

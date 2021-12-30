@@ -1,4 +1,3 @@
-
 #-*- coding:utf-8 -*-
 
 from datetime import date
@@ -47,8 +46,11 @@ def pushing(r):
         init()
     else:
         sp = r.split('-')
-        print(sp)
-        data[sp[0]] = sp[1]
+        data['id'] = sp[0]
+        data['startwith'] = sp[1]
+        data['endwith'] = sp[2]
+        data['fid'] = sp[3]
+        data['energy'] = sp[4]
 
 
 
@@ -60,4 +62,3 @@ while True:
         r = r.replace('\n', '')
         #print(r[:len(r)-1])
         pushing(r)
-

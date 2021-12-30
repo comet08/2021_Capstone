@@ -15,6 +15,7 @@ import {bold , plane} from '../../font'
 const {width, height} = Dimensions.get('window')
 
 const DiscountLog = ({data}) =>{
+  const arr = data.reverse();
     return (
         <>
           <View style={styles.historyTitleFrame}>
@@ -22,12 +23,19 @@ const DiscountLog = ({data}) =>{
           </View>
 
           <View style={styles.historyList}>
-            <ScrollView>
+            <View style={[styles.header, styles.row]}>
+              <Text style={styles.historyText}> 날짜 </Text>
+              <Text style={styles.historyText}> 시간 </Text>
+              <Text style={styles.historyText}> 전력 </Text>
+            </View>
+          <ScrollView contentContainerStyle={styles.scroll}>
             {
-                    data.reverse().map((d, index) =>
+                   arr.map((d, index) =>
                     (
-                        <View style={styles.innerContainer} key={index}>
-                            <Text> {d.date} {d.time} {d.donateTo} {d.energy}</Text>
+                        <View style={[styles.innerContainer, styles.row]} key={index}>
+                            <Text style={styles.inner}> {d.date.split('T')[0]} </Text>
+                            <Text style={styles.inner}> {d.time} </Text>
+                            <Text style={styles.inner}>  {d.energy} mA</Text>
                         </View>
                     ))
                 } 
@@ -41,7 +49,7 @@ export default DiscountLog;
 
 const styles = StyleSheet.create({
     historyTitleFrame: {
-        backgroundColor: '#ddd',
+        backgroundColor: '#eee',
         borderTopLeftRadius: 5,
         borderTopRightRadius: 5,
         marginLeft: 15,
@@ -51,14 +59,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width : width-50,
       },
+      scroll:{
+        
+      },  
+      row:{
+        display: 'flex',
+        flexDirection: 'row',
+      },
       historyTitle: {
         color: 'black',
         textAlign: 'center',
         fontFamily : bold,
         fontSize : 15,
       },
+      header:{
+        justifyContent : 'space-between',
+        borderBottomColor: '#bbb',
+        borderBottomWidth: 1,
+        
+        paddingHorizontal: 20
+      },
       historyList: {
-        backgroundColor: '#eee',
+        backgroundColor: '#fff',
         //flex: 1,
         borderBottomLeftRadius: 5,
         borderBottomRightRadius: 5,
@@ -66,11 +88,11 @@ const styles = StyleSheet.create({
         marginRight: 15,
         padding: 10,
         justifyContent: 'center',
+        textAlign : 'center',
+        height: height/3.5
       },
       historyText: {
-        borderBottomColor: '#bbb',
-        borderBottomWidth: 1,
-        fontFamily : plane
+        fontFamily : plane,
       },
       frameButton: {
         backgroundColor: '#ddd',
@@ -82,5 +104,17 @@ const styles = StyleSheet.create({
       histFrame : {
         flex:1,
         width : width
+      },
+      innerContainer : {
+        display: 'flex',
+        justifyContent : 'center'
+         
+      },
+      inner : {
+        width: width/3.7,
+        textAlign: 'center',
+        borderBottomColor: '#bbb',
+        borderBottomWidth: 1,
       }
+
 })

@@ -70,6 +70,7 @@ const Home = ({navigation}) => {
       .get(`http://${url}/logdis`)
       .then(res => {
         setDiscountLog(res.data);
+        console.log(res.data)
       })  
       .catch(err => {
         console.log('로그  에러');
@@ -79,6 +80,7 @@ const Home = ({navigation}) => {
       .get(`http://${url}/logdona`)
       .then(res => {
         setDonateLog(res.data);
+        console.log(res.data)
       })  
       .catch(err => {
         console.log('로그  에러');
@@ -135,7 +137,6 @@ const Home = ({navigation}) => {
   const onRun = async () => {
     if (runText == '운동시작') {
 
-    
       BluetoothSerial.requestEnable()
         .then(res => 
         {
@@ -168,8 +169,6 @@ const Home = ({navigation}) => {
     histList();
   }, []);
 
-    
-  
 
   return (
     <View style={styles.container}>
