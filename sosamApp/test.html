@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+
+    </body>
+    <script>
+        fetch('http:/3.15.157.42/rank',
+        {
+            method : 'get',
+        })
+        .then((res)=>res.json())
+        .then(data=>{
+            console.log(data)
+        })
+    </script>
+</html>

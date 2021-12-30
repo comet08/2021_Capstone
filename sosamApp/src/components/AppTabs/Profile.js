@@ -10,16 +10,27 @@ import {
   SafeAreaView,
   Alert,
   ScrollView,
+  Dimensions,
+  Touchable,
 } from 'react-native';
+
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IIcon from 'react-native-vector-icons/Ionicons';
+import FIcon from 'react-native-vector-icons/Fontisto';
+import FoIcon from 'react-native-vector-icons/FontAwesome5';
+
 
 import axios from 'axios';
 import AsyncStorage  from "@react-native-async-storage/async-storage"
 
 import {useDispatch} from 'react-redux';
-import checkLogin from '../../redux/actions';
+import { checkLogin } from '../../redux/actions';
 import url from '../../url';
 import {bold , plane} from '../../font'
 
+const {width, height} = Dimensions.get('window');
+const color="white";
+const iconSize=30
 
 const Profile = ({navigation, setLoggedIn}) => {
   const dispatch = useDispatch();
@@ -29,10 +40,11 @@ const Profile = ({navigation, setLoggedIn}) => {
       .get(`http://${url}/logout`) 
       .then(res => {
         if (res.data) {
+          console.log(res.data);
           AsyncStorage.setItem('loggedIn', JSON.stringify(false));
-          dispatch(checkLogin());
+          dispatch(checkLogin(false, ' '));
         }
-        console.log(res.data);
+        
       })
       .catch(err => {
         console.log(err);
@@ -147,52 +159,47 @@ const Profile = ({navigation, setLoggedIn}) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
       <Text style={styles.appTitle}>사용자 설정</Text>
+      </View>
 
       {status ? (
         <>
         <View style={styles.frame}>
-          <Text style={styles.label}>
-            {' '}
-            이름 {'\t\t\t\t'}
-            <Text style={styles.info}> {uname} </Text>
-          </Text>
-
-          <Text style={styles.label}>
-            {' '}
-            닉네임 {'\t\t\t\t'}
-            <Text style={styles.info}> {nname} </Text>
-          </Text>
-
-          <Text style={styles.label}>
-            {' '}
-            메시지 {'\t\t\t\t'}
-            <Text style={styles.info}> {message} </Text>
-          </Text>
-
-          <Text style={styles.label}>
-            {' '}
-            휴대폰 번호 {'\t\t\t\t'}
-            <Text style={styles.info}> {ph} </Text>
-          </Text>
-
-          <Text style={styles.label}>
-            {' '}
-            주소 {'\t\t\t\t'}
-            <Text style={styles.info}> {addr} </Text>
-          </Text>
-
-          <Text style={styles.label}>
-            {' '}
-            생일 {'\t\t\t\t'}
-            <Text style={styles.info}> {age} </Text>
-          </Text>
+          <View style={styles.user}>
+            <View style={styles.icon}>
+              <FoIcon name="seedling" color={"black"} size={50} />
+            </View>
+            <View style={styles.nickMessage}>
+            <Text style={styles.nick}> {nname} </Text>
+            <Text style={styles.message}> {message} </Text>
+            </View>
+          </View>
         </View>
         <View style={styles.changeButton}>
-          <Button style={{fontFamily : plane}}title={'정보 수정'} color="rgb(20,100,100)" onPress={buttonPress} />
+          <TouchableOpacity style={styles.cButton} onPress={buttonPress}>
+            <IIcon name="settings-outline" color={color} size={iconSize} />
+            <Text style={styles.cText}>정보 수정</Text>
+          </TouchableOpacity>
+          <View style={styles.space} />
+          <TouchableOpacity style={styles.cButton} onPress={buttonPress}>
+            <FoIcon name="running" color={color} size={iconSize} />
+            <Text style={styles.cText}>운동 내역</Text>
+          </TouchableOpacity>
+          <View style={styles.space} />
+          <TouchableOpacity style={styles.cButton} onPress={buttonPress}>
+            <FIcon name="shopping-sale" color={color} size={iconSize} />
+            <Text style={styles.cText}>전기료 할인 내역</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.cButton} onPress={buttonPress}>
+          <MIcon name="hand-heart" color={color} size={iconSize} />
+            <Text style={styles.cText}>기부 내역</Text>
+          </TouchableOpacity>
         </View>
+
         <TouchableOpacity style={styles.logoutContainer} onPress={onLogout}>
-        <Text style={styles.logout}>Logout</Text>
+        <Text style={styles.logout}>로그아웃</Text>
       </TouchableOpacity>
         </>
         
@@ -276,14 +283,13 @@ export default Profile;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgb(64,183,173)',   
+    backgroundColor: '#eee',   
     flex:1,
   },
   logoutContainer: {
     marginLeft: 20,
     marginRight: 20,
     padding: 5,
-    marginTop : 20,
     backgroundColor: 'black',
     justifyContent: 'center',
     color : 'white',
@@ -295,17 +301,20 @@ const styles = StyleSheet.create({
   logout: {
     textAlign: 'center',
     color  : 'white',
-    fontSize: 20,
-    fontFamily : plane
+    fontSize: width/20,
+    fontFamily : plane,
+    marginVertical : 10,
+  },
+  header:{
+    backgroundColor: "rgb(30,150,150)"
   },
 
   //사용자 설정 타이틀
   appTitle: {
-    color: 'black',
-    fontSize: 36,
+    color: 'white',
+    fontSize: width/18,
     marginTop: 20,
     marginBottom: 20,
-    paddingBottom: 30,
     fontWeight: '300',
     textAlign: 'center',
 
@@ -319,15 +328,65 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5, //각
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
-    marginLeft: 15,
-    marginRight: 15,
     //marginBottom: 50,
     padding: 10,
     //alignItems: 'center',
     justifyContent: 'center',
   },
+  nick:{
+    color : "black",
+    fontSize: width/20,
+    fontFamily: bold,
+  },
+  message:{
+    paddingTop: 10,
+    color : "black",
+    fontFamily: plane,
+  },
+  user:{
+    borderRadius: 10,
+    borderColor: "black",
+    borderWidth:1,
+    padding: 10,
+    
+    alignItems: 'center',
+    textAlign: 'center'
+
+  },
+  icon:{
+    borderRadius: 50,
+    borderColor: "black",
+    borderWidth:3,
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems : 'center'
+
+  },
+  nickMessage:{
+    marginLeft: 10,
+    paddingTop: 10,
+    alignItems: 'center'
+ 
+  },
   row: {
     flexDirection: 'row',
+  },
+  cButton:{
+    fontFamily: plane,
+    backgroundColor : "rgb(30,153,153)",
+    marginBottom: 10,
+    padding: 10,
+    display: "flex",
+    flexDirection: "row"
+    
+  },
+  cText:{
+    fontFamily: plane,
+    fontSize : width/20,
+    marginLeft: 20,
+    color: 'white',
+    paddingTop: 5
   },
   inputWrap: {
     flex: 1,
@@ -338,40 +397,33 @@ const styles = StyleSheet.create({
     //marginBottom: -15
     
   },
-
+  space:{
+    marginVertical: 10,
+    backgroundColor: 'grey',
+    height: 2,
+  },  
   label: {
     height: 40,
     paddingBottom: 10,
     marginTop: 20,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
-    fontFamily : plane
-    //fontSize: 24,
+    fontFamily : plane,
+    fontSize: width/24,
+
     //marginLeft: 10,
     //marginBottom: -12,
   },
 
   info: {
-    //flex: 1,
     textAlign: 'center',
-    //borderLeftWidth: 2,
     color: 'gray',
-    //paddingLeft: 50,
-    //marginLeft: 50,
-    //height:40,
-    //paddingBottom: 10,
-    //marginTop: 20,
-    //borderBottomColor: '#bbb',
-    //borderBottomWidth: 1,
-    //fontSize: 24,
-    //marginBottom: -12,
+
     fontFamily : plane
   },
 
   input: {
     height: 40,
-    //minheight:40,
-    //maxHeight: 40,
     paddingBottom: 10,
     marginTop: 20,
     //flex: 1,

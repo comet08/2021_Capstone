@@ -169,7 +169,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontSize: 20,
   },
-  inputContainer: {},
+  inputContainer: {
+    marginVertical :40
+  },
   reg: {
     backgroundColor: 'black',
     flexDirection: 'row',

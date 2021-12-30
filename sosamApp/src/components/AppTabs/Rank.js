@@ -85,26 +85,16 @@ const Rank = ({navigation}) => {
   }, [])
 
 
-  return (
+  return ( 
     <View style={styles.container}>
       <Text style={styles.appTitle}>순위</Text>
 
-      <View style={styles.myFrame}>
-        <Text style={styles.myranktitle}> {nname} </Text>
-        <Text style={styles.uname}>
-          <Text style={styles.urank}> ▪ {myrank} 위 ▪ </Text>
-        </Text>
+      <View style={styles.myFrame}> 
+        <Text style={styles.myrank}> 내 순위 {myrank} 위 </Text>
       </View>
 
       <View style={styles.frame}>
-      <View style={styles.titlerow}>
-        <Text style={styles.myranktitle}> 
-         순위 {'\t\t\t'} 
-         에너지 {'\t\t\t\t'} 
-         닉네임 {'\t\t\t\t\t'} 
-         메시지</Text>
-
-      </View>
+ 
         <ScrollView>
           {
             data.map((d, index) => (
@@ -123,8 +113,9 @@ const styles = StyleSheet.create({
   titlerow: {
     flexDirection:'row',
     justifyContent: 'space-between',
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    
   },
   amountlist: {
     width: 40,
@@ -133,15 +124,16 @@ const styles = StyleSheet.create({
     width: 80,
   },
   container: {
-    backgroundColor: 'rgb(64,183,173)',
+    backgroundColor: 'white',
     flex: 1,
+    width : width
     //alignItems : 'center',
     //flexDirection : 'column'
   },
   //타이틀
   appTitle: {
     color: 'black',
-    fontSize: 36,
+    fontSize: width/11,
     marginTop: 20,
     marginVertical : 20,
     fontWeight: '300',
@@ -149,35 +141,41 @@ const styles = StyleSheet.create({
     fontFamily : bold
   },
   myFrame: {
-    backgroundColor: '#ddd',
+    backgroundColor: 'rgb(64,183,173)',
     flex: 1,
     borderTopLeftRadius: 5, //각
     borderTopRightRadius: 5, //각
     marginHorizontal : 5,
     flexDirection : 'column',
 
-    maxHeight: 100,
+    maxHeight: 80,
 
     justifyContent: 'center',
     
   },
   frame: {
-    backgroundColor: '#eee',
+    backgroundColor: 'white',
     flex: 1,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
     marginHorizontal : 5,
     marginBottom: 15,
-
+    textAlign: 'center',
     padding: 15,
-    justifyContent: 'center',
     
+  },
+  myrank:{
+    fontSize: width/20,
+    color: "black",
+    textAlign: 'center',
+    fontFamily: bold
   },
 
   myranktitle: {
     color: 'gray',
     textAlign: 'center',
-    fontFamily : plane
+    fontFamily : plane,
+    fontSize: width/25,
   },
   uname: {
     padding: 10,
@@ -189,7 +187,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomColor: '#bbb',
     textAlign: 'center',
-    fontSize: 35,
+    fontSize: width/9,
     fontFamily : plane
   },
 
